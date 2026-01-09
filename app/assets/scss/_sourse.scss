@@ -83,8 +83,8 @@ svg {
 
 body {
 	font-family: $mainFont;
-	background: $bgColor;
-	color: $white;
+	background: $white;
+	color: $bgColor;
 }
 
 ul {
@@ -93,7 +93,7 @@ ul {
 
 
 .container {
-	width: 1560px;
+	width: 1500px;
 	margin: 0 auto;
 }
 
@@ -179,33 +179,27 @@ ul {
 }
 
 @media only screen and (max-width: 1750px) {
-	.container {
-		width: 1440px;
-	}
+	.container {}
 }
 
 @media only screen and (max-width: 1580px) {
 	.container {
-		width: 1360px;
+		width: 1420px;
 	}
 }
 
-@media only screen and (max-width: 1500px) {
+@media only screen and (max-width: 1450px) {
 	.container {
-		width: 1160px;
+		width: 1200px;
 	}
 }
 
 @media only screen and (max-width: 1380px) {
-	.container {
-		width: 980px;
-	}
+	.container {}
 }
 
 @media only screen and (max-width: 990px) {
-	.container {
-		width: 750px;
-	}
+	.container {}
 }
 
 @media only screen and (max-width: 760px) {

@@ -1,9 +1,9 @@
 <template>
   
     <div class="app-wrapper">
-<!--     
-        <componentHeader /> -->
-        
+
+        <headerComponent />
+                
         <slot/>
     
         <!-- <componentFooter />         -->
@@ -18,14 +18,13 @@
 
 import { ref, onMounted, onBeforeUnmount, computed, watch  } from 'vue';
 
+import headerComponent from '@/components/header.vue'
+
 
 
 // import { useCounterStore } from '@/stores/counter'
 
 // import { useNuxtApp } from '#app'
-
-
-
 
 
 

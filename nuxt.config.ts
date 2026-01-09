@@ -9,6 +9,13 @@ export default defineNuxtConfig({
   vite: {
     css: {
       preprocessorMaxWorkers: true, // number of CPUs minus 1
+      preprocessorOptions: {
+        scss: {
+          additionalData: `
+            @use "@/assets/scss/vars" as *;
+          `
+        }
+      }
     },
   },
 
