@@ -1,0 +1,242 @@
+.btnV1 {
+    width: 340px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+
+    position: relative;
+}
+
+.btnV1__title {
+    color: $gold1;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-family: $titleFont;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%;
+    /* 22px */
+    letter-spacing: 0.44px;
+    padding: 20px 0;
+    width: 100%;
+    transition: all ease 0.3s;
+
+}
+
+.btnV1__circle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 10px;
+    background: $white;
+    transition: all ease 0.3s;
+    z-index: 2;
+}
+
+.btnV1__circle-1 {
+    left: 0;
+    bottom: 0;
+}
+
+.btnV1__circle-2 {
+    right: 0;
+    top: 0;
+}
+
+.btnV1__line {
+    z-index: 2;
+    background: $white;
+    position: absolute;
+    transition: all ease 0.3s;
+}
+
+.btnV1__line-1 {
+    width: calc(100% - 15px);
+    height: 1px;
+    left: 0;
+    top: 0;
+
+}
+
+.btnV1__line-2 {
+    width: calc(100% - 15px);
+    height: 2px;
+    right: 0;
+    bottom: 0;
+
+}
+
+.btnV1__line-3 {
+    width: 1px;
+    height: calc(100% - 15px);
+    left: 0;
+    top: 0;
+
+}
+
+.btnV1__line-4 {
+    width: 2px;
+    height: calc(100% - 15px);
+    right: 0;
+    bottom: 0;
+
+}
+
+.btnV1 {
+    &:hover {
+        .btnV1__line-3 {
+            height: 100%;
+            transition: all ease 0.3s;
+
+        }
+
+        .btnV1__line-2 {
+            width: 100%;
+            transition: all ease 0.3s;
+
+        }
+
+        .btnV1__line-4 {
+            height: 100%;
+            transition: all ease 0.3s;
+
+        }
+
+        .btnV1__line-1 {
+            width: 100%;
+            transition: all ease 0.3s;
+
+        }
+
+        .btnV1__circle {
+            transition: all ease 0.3s;
+            opacity: 0;
+        }
+
+        .btnV1__title {
+            transition: all ease 0.3s;
+            background: $bgColor2;
+            color: $gold1;
+
+        }
+    }
+}
+
+.btnV1--blick {
+    overflow: hidden;
+}
+
+
+
+
+/* сам блик */
+.btnV1--blick::after {
+    content: "";
+    position: absolute;
+    top: -150px;
+    left: -60px;
+
+    width: 40px;
+    height: 300px;
+
+    background: rgba(255, 255, 255, 0.6);
+    transform: rotate(45deg);
+
+    z-index: 2;
+
+    animation: slideme 3s ease-in-out infinite;
+}
+
+/* анимация блика */
+@keyframes slideme {
+    0% {
+        left: -60px;
+    }
+
+    30% {
+        left: 130%;
+    }
+
+    100% {
+        left: 130%;
+    }
+}
+
+
+
+
+
+.btnV2 {
+    padding: 2px;
+    border-radius: 100px;
+    border: none;
+    width: 100%;
+    transition: all ease 0.3s;
+    background: linear-gradient(90deg, #F5CA85 0%, #7D5935 100%);
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.30);
+
+    &:hover {
+        transition: all ease 0.3s;
+
+        .btnV2__wrapper {
+            transition: all ease 0.3s;
+            background: $bgColor3;
+        }
+    }
+}
+
+.btnV2__wrapper {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.9px;
+    padding: 20px 0;
+    border-radius: 100px;
+    color: $white;
+    transition: all ease 0.3s;
+    font-family: $mainFont;
+    background: $bgColor2;
+
+}
+
+@media only screen and (max-width: 1500px) {
+    .btnV1__title {
+        font-size: 20px;
+        padding: 15px 0;
+    }
+
+    .btnV1 {
+        width: 300px;
+    }
+}
+
+@media only screen and (max-width: 990px) {
+    .btnV1__title {
+        font-size: 18px;
+        padding: 15px 0;
+    }
+
+    .btnV1 {
+        width: 280px;
+    }
+}
+
+@media only screen and (max-width: 760px) {
+    .btnV1__title {
+        font-size: 16px;
+        padding: 16px 0;
+    }
+
+    .btnV1 {
+        width: 300px;
+    }
+}
