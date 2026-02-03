@@ -14,90 +14,39 @@ import bannerSliderSec from '@/components/sections/banner-slider-sec.vue'
 import brendsSliderSec from '@/components/sections/brends-slider-sec.vue'
 import productsSliderSec from '@/components/sections/products-slider-sec.vue'
 
-const newArrivalsProducts = [
-  {
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
-    brand: 'adidas Original',
-    category: 'Кроссовки',
-    model: 'Hamburg',
-    price: '12 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400',
-    brand: 'Reebok',
-    category: 'Женские кроссовки',
-    model: 'ERS 4000',
-    price: '9 490 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400',
-    brand: 'Nike',
-    category: 'Мужские кроссовки',
-    model: "Wmns Blazer Low '77 Vintage",
-    price: '14 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400',
-    brand: 'Premiata',
-    category: 'Кроссовки',
-    model: 'Cassie 7472',
-    price: '18 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400',
-    brand: 'Puma',
-    category: 'Кроссовки',
-    model: 'Easy Rider Mix',
-    price: '11 490 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400',
-    brand: 'Converse',
-    category: 'Кеды',
-    model: 'Chuck Taylor All Star',
-    price: '7 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400',
-    brand: 'New Balance',
-    category: 'Беговые',
-    model: '574',
-    price: '13 490 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=400',
-    brand: 'Vans',
-    category: 'Скейтбординг',
-    model: 'Old Skool',
-    price: '8 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1603808033192-082d6919dacb?w=400',
-    brand: 'Asics',
-    category: 'Беговые',
-    model: 'Gel-Kayano',
-    price: '15 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1607522370275-f14206abd5d1?w=400',
-    brand: 'Fila',
-    category: 'Кроссовки',
-    model: 'Disruptor',
-    price: '10 490 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400',
-    brand: 'Jordan',
-    category: 'Баскетбол',
-    model: 'Air 1 Mid',
-    price: '16 990 P',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400',
-    brand: 'Nike',
-    category: 'Кроссовки',
-    model: 'Air Max 90',
-    price: '14 490 P',
-  },
+const productImageModules = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
+const productImageUrls = Object.values(productImageModules).map((m) => (typeof m === 'string' ? m : m?.default ?? ''))
+
+function getImg(index) {
+  return productImageUrls[index % productImageUrls.length] ?? productImageUrls[0] ?? ''
+}
+
+const colorPalette = ['#1a1a1a', '#ffffff', '#c0c0c0', '#8b4513', '#2c5282', '#c53030', '#2f855a', '#744210', '#553c9a', '#b83280', '#dd6b20', '#e53e3e', '#3182ce', '#38a169']
+function pickRandomColors(count) {
+  const shuffled = [...colorPalette].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
+
+const productRows = [
+  { title: 'Nike SB Dunk Low Pro', subtitle: 'Skate Shoes', price: '45 990 ₸', img: getImg(0), tag: 'BEST SELLER', description: 'Классика, на которую можно положиться. Дизайн в духе скейт-культуры и кожаных курток — удобные кроссовки для города и катания.' },
+  { title: 'adidas Hamburg', subtitle: 'Кроссовки', price: '32 990 ₸', img: getImg(1), description: 'Легендарная модель adidas в ретро-стиле. Удобная колодка и узнаваемый силуэт для повседневной носки.' },
+  { title: 'Reebok Club C 85', subtitle: 'Женские кроссовки', price: '28 990 ₸', img: getImg(2), tag: 'BEST SELLER', description: 'Минималистичный дизайн и мягкая подошва. Идеальный выбор для тех, кто ценит простоту и комфорт.' },
+  { title: "Nike Blazer Low '77", subtitle: 'Мужские кроссовки', price: '49 990 ₸', img: getImg(3), description: 'Низкий силуэт в духе баскетбола 70-х. Классика Nike с современной посадкой и долговечными материалами.' },
+  { title: 'New Balance 574', subtitle: 'Беговые', price: '39 990 ₸', img: getImg(4), description: 'Универсальная модель для бега и прогулок. Поддержка стопы и стабильность в каждой детали.' },
+  { title: 'Converse Chuck Taylor', subtitle: 'Кеды', price: '24 990 ₸', img: getImg(5), tag: 'BEST SELLER', description: 'Самые узнаваемые кеды в мире. Канвас, резиновая подошва и дух уличной культуры с 1917 года.' },
+  { title: 'Puma Suede Classic', subtitle: 'Кроссовки', price: '21 990 ₸', img: getImg(6), description: 'Замшевый верх и мягкая подошва. Классика Puma для повседневного стиля.' },
+  { title: 'Vans Old Skool', subtitle: 'Скейтбординг', price: '27 990 ₸', img: getImg(7), description: 'Полоска на боку и прочная конструкция. Выбор скейтеров и любителей уличной моды по всему миру.' },
+  { title: 'adidas Hamburg', subtitle: 'Кроссовки', price: '32 990 ₸', img: getImg(1), description: 'Легендарная модель adidas в ретро-стиле. Удобная колодка и узнаваемый силуэт для повседневной носки.' },
+  { title: 'Reebok Club C 85', subtitle: 'Женские кроссовки', price: '28 990 ₸', img: getImg(2), description: 'Минималистичный дизайн и мягкая подошва. Идеальный выбор для тех, кто ценит простоту и комфорт.' },
+  { title: "Nike Blazer Low '77", subtitle: 'Мужские кроссовки', price: '49 990 ₸', img: getImg(3), description: 'Низкий силуэт в духе баскетбола 70-х. Классика Nike с современной посадкой и долговечными материалами.' },
+  { title: 'New Balance 574', subtitle: 'Беговые', price: '39 990 ₸', img: getImg(4), description: 'Универсальная модель для бега и прогулок. Поддержка стопы и стабильность в каждой детали.' },
+  { title: 'Converse Chuck Taylor', subtitle: 'Кеды', price: '24 990 ₸', img: getImg(5), description: 'Самые узнаваемые кеды в мире. Канвас, резиновая подошва и дух уличной культуры с 1917 года.' },
+  { title: 'Puma Suede Classic', subtitle: 'Кроссовки', price: '21 990 ₸', img: getImg(6), description: 'Замшевый верх и мягкая подошва. Классика Puma для повседневного стиля.' },
+  { title: 'Vans Old Skool', subtitle: 'Скейтбординг', price: '27 990 ₸', img: getImg(7), description: 'Полоска на боку и прочная конструкция. Выбор скейтеров и любителей уличной моды по всему миру.' },
 ]
+
+const newArrivalsProducts = productRows.map((p) => ({
+  ...p,
+  colors: pickRandomColors(2 + Math.floor(Math.random() * 2)),
+}))
 </script>

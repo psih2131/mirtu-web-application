@@ -13,7 +13,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 //IMPORT
 
 import { ref, onMounted, onBeforeUnmount, computed, watch  } from 'vue';

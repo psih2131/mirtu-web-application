@@ -43,9 +43,9 @@
   </section>
 </template>
 
-<script setup lang="ts">
-const swiperRef = ref<HTMLElement | null>(null)
-const wrapRef = ref<HTMLElement | null>(null)
+<script setup>
+const swiperRef = ref(null)
+const wrapRef = ref(null)
 
 function setWrapWidth() {
   const el = wrapRef.value
@@ -53,7 +53,7 @@ function setWrapWidth() {
   el.style.setProperty('--banner-wrap-width', `${el.offsetWidth}px`)
 }
 
-let resizeObserver: ResizeObserver | null = null
+let resizeObserver = null
 
 onMounted(() => {
   nextTick(() => {

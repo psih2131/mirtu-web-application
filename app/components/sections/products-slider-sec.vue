@@ -46,29 +46,21 @@
   </section>
 </template>
 
-<script setup lang="ts">
-export interface ProductSlideItem {
-  image: string
-  brand: string
-  category: string
-  model: string
-  price: string
-}
-
-const props = withDefaults(
-  defineProps<{
-    title?: string
-    products?: ProductSlideItem[]
-  }>(),
-  {
-    title: 'Популярные товары',
-    products: () => [],
-  }
-)
+<script setup>
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Популярные товары',
+  },
+  products: {
+    type: Array,
+    default: () => [],
+  },
+})
 
 const productsSwiperRef = ref(null)
 const currentPage = ref(1)
-const totalPages = computed(() => Math.max(1, props.products.length))
+const totalPages = computed(() => Math.max(1, (props.products || []).length))
 
 const swiperApi = useSwiper(productsSwiperRef, {
   slidesPerView: 4,
@@ -84,8 +76,8 @@ const swiperApi = useSwiper(productsSwiperRef, {
   },
 })
 
-function onSlideChange(e: CustomEvent) {
-  const [swiper] = e.detail as [{ realIndex: number }]
+function onSlideChange(e) {
+  const [swiper] = e.detail || []
   if (swiper) currentPage.value = swiper.realIndex + 1
 }
 

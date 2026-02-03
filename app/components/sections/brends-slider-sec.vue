@@ -32,7 +32,7 @@
   </section>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const brendsSwiperRef = ref(null)
 
 useSwiper(brendsSwiperRef, {
@@ -53,7 +53,7 @@ useSwiper(brendsSwiperRef, {
   },
 })
 
-const brandLogosModules = import.meta.glob<{ default: string }>('~/assets/images/brends/*.svg', { eager: true, query: '?url', import: 'default' })
+const brandLogosModules = import.meta.glob('~/assets/images/brends/*.svg', { eager: true, query: '?url', import: 'default' })
 
 const brandNames = [
   'STREETBEAT',
