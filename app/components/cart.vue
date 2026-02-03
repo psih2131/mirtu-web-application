@@ -88,7 +88,7 @@
               <dt>Итого</dt>
               <dd>{{ formatPrice(counterStore.cartTotal) }} ₸</dd>
             </div>
-            <NuxtLink to="/checkout" class="cart__checkout" @click="closeCart">
+            <NuxtLink to="/order" class="cart__checkout" @click="closeCart">
               Оформить заказ
             </NuxtLink>
           </aside>
