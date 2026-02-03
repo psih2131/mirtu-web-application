@@ -1,11 +1,26 @@
 <template>
   <div>
     <bannerSliderSec />
+
     <brendsSliderSec />
+
     <productsSliderSec
-      title="Новые поступления"
+      title="Популярные модели"
       :products="newArrivalsProducts"
     />
+
+    <actualCatSec />
+
+    <productsSliderSec
+      title="Часто покупают"
+      :products="newArrivalsProducts"
+    />
+
+    <productsSliderSec
+      title="Лидеры продаж"
+      :products="newArrivalsProducts"
+    />
+
   </div>
 </template>
 
@@ -13,6 +28,7 @@
 import bannerSliderSec from '@/components/sections/banner-slider-sec.vue'
 import brendsSliderSec from '@/components/sections/brends-slider-sec.vue'
 import productsSliderSec from '@/components/sections/products-slider-sec.vue'
+import actualCatSec from '@/components/sections/actyal-cat-sec.vue'
 
 const productImageModules = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
 const productImageUrls = Object.values(productImageModules).map((m) => (typeof m === 'string' ? m : m?.default ?? ''))
