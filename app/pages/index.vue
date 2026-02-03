@@ -25,6 +25,8 @@
       :posts="blogPosts"
     />
 
+    <seoTextSec />
+
   </div>
 </template>
 
@@ -34,6 +36,7 @@ import brendsSliderSec from '@/components/sections/brends-slider-sec.vue'
 import productsSliderSec from '@/components/sections/products-slider-sec.vue'
 import actualCatSec from '@/components/sections/actyal-cat-sec.vue'
 import blogSliderSec from '@/components/sections/blog-slider-sec.vue'
+import seoTextSec from '@/components/sections/seo-text-sec.vue'
 import a1 from '~/assets/images/products/a1.jpg'
 import a2 from '~/assets/images/products/a2.jpg'
 import a3 from '~/assets/images/products/a3.jpg'

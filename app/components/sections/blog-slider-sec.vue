@@ -1,7 +1,7 @@
 <template>
   <section class="blog-sec">
     <div class="container blog-sec__container">
-      <header class="blog-sec__header">
+      <div class="blog-sec__header">
         <div class="blog-sec__header-main">
           <h2 class="blog-sec__title">Наш блог</h2>
           <p class="blog-sec__subtitle">
@@ -29,7 +29,7 @@
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       <ClientOnly>
         <swiper-container
