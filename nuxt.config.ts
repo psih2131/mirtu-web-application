@@ -19,8 +19,6 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: [
-    '@pinia/nuxt',
-    // другие модули
-  ],
+  modules: [// другие модули
+  '@pinia/nuxt', 'nuxt-swiper'],
 })
