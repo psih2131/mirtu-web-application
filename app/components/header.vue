@@ -59,7 +59,7 @@
             <nav class="header__nav">
                 <ul class="header__nav-list">
                     <li class="header__nav-element">
-                        <NuxtLink class="header__nav-link">Кросовки</NuxtLink>
+                        <NuxtLink to="/products/categories/sneakers" class="header__nav-link">Кросовки</NuxtLink>
                     </li>
                     <li class="header__nav-element">
                         <NuxtLink class="header__nav-link">Кеды</NuxtLink>

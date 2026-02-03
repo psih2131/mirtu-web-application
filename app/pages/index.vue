@@ -18,7 +18,7 @@
 
     <productsSliderSec
       title="Одежда для спорта"
-      :products="productRows2"
+      :products="clothingProducts"
     />
 
     <blogSliderSec
@@ -90,6 +90,11 @@ const productRows2 = [
 ]
 
 const newArrivalsProducts = productRows.map((p) => ({
+  ...p,
+  colors: pickRandomColors(2 + Math.floor(Math.random() * 2)),
+}))
+
+const clothingProducts = productRows2.map((p) => ({
   ...p,
   colors: pickRandomColors(2 + Math.floor(Math.random() * 2)),
 }))
