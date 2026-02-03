@@ -6,7 +6,7 @@
                 
         <slot/>
     
-        <!-- <componentFooter />         -->
+        <footerComponent />
 
     </div>
   
@@ -19,6 +19,8 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch  } from 'vue';
 
 import headerComponent from '@/components/header.vue'
+
+import footerComponent from '@/components/footer.vue'
 
 
 
