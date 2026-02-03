@@ -14,7 +14,14 @@
             </div>
 
             <div class="header__store-controls-row">
-                <div class="header__store-control-element header-store-control">
+                <div
+                    class="header__store-control-element header-store-control header-store-control--cart"
+                    role="button"
+                    aria-label="Открыть корзину"
+                    tabindex="0"
+                    @click="openCart"
+                    @keydown.enter="openCart"
+                >
                     <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_18_239)">
                     <path d="M7.875 19.25C8.35825 19.25 8.75 18.8582 8.75 18.375C8.75 17.8918 8.35825 17.5 7.875 17.5C7.39175 17.5 7 17.8918 7 18.375C7 18.8582 7.39175 19.25 7.875 19.25Z" stroke="#2E3A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -95,5 +102,11 @@
 </template>
 
 <script setup>
-    import headerSearch from '@/components/fields/headerSearch.vue'
+import headerSearch from '@/components/fields/headerSearch.vue'
+import { useCounterStore } from '@/stores/counter'
+
+const counterStore = useCounterStore()
+function openCart() {
+    counterStore.openCart()
+}
 </script>

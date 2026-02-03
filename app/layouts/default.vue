@@ -1,34 +1,23 @@
 <template>
-  
-    <div class="app-wrapper">
+  <div class="app-wrapper">
 
-        <headerComponent />
-                
-        <slot/>
+    <headerComponent />
+
+    <slot/>
+
+    <footerComponent />
+
+    <cartComponent />
     
-        <footerComponent />
-
-    </div>
-  
+  </div>
 </template>
 
-
 <script setup>
-//IMPORT
-
-import { ref, onMounted, onBeforeUnmount, computed, watch  } from 'vue';
-
 import headerComponent from '@/components/header.vue'
-
 import footerComponent from '@/components/footer.vue'
+import cartComponent from '@/components/cart.vue'
+import { useCounterStore } from '@/stores/counter'
 
-
-
-// import { useCounterStore } from '@/stores/counter'
-
-// import { useNuxtApp } from '#app'
-
-
-
+const counterStore = useCounterStore()
 </script>
 
