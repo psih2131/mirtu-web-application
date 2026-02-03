@@ -1,0 +1,687 @@
+// Страница товара — первая секция (hero)
+
+.product-page {
+
+
+  .container{
+    width: 1350px;
+  }
+}
+
+.product-hero {
+    padding-top: 200px;
+    padding-bottom: 50px;
+     background: #fff;
+}
+
+// Top bar: breadcrumbs + actions
+.product-hero__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-hero__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.product-hero__breadcrumb {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #111827;
+  }
+}
+
+.product-hero__breadcrumb-sep {
+  color: #9ca3af;
+}
+
+.product-hero__breadcrumb-current {
+  color: #111827;
+  font-weight: 500;
+}
+
+.product-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.product-hero__sku {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+// Layout: gallery left, info right
+.product-hero__layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+// Gallery: main on top, thumbs row below
+.product-hero__gallery {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+}
+
+.product-hero__main {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 560px;
+  background: #f9fafb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// Бейдж скидки в левом верхнем углу слайдера
+.product-hero__sale {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fff;
+  background: #90D0B5;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+// Кружки со стрелками влево/вправо — всегда видны
+.product-hero__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #111827;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+  }
+}
+
+.product-hero__arrow--prev {
+  left: 0.75rem;
+}
+
+.product-hero__arrow--next {
+  right: 0.75rem;
+}
+
+.product-hero__fav {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #111827;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.product-hero__fav--active {
+  background: #dc2626;
+  color: #fff;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}
+
+.product-hero__main-swiper {
+  height: 100%;
+  margin: 0;
+}
+
+.product-hero__main-slide {
+  height: 100%;
+}
+
+.product-hero__main-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-hero__thumbs {
+  width: 100%;
+  height: auto;
+  margin-top: 15px;
+}
+
+.product-hero__thumbs-swiper {
+  margin: 0;
+}
+
+.product-hero__thumb {
+  height: auto;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.product-hero__thumb--active {
+  border-color: #57A3DA;
+}
+
+.product-hero__thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+
+// Info column
+.product-hero__info {
+  width: calc(100% - 600px);
+  padding-left: 60px;
+}
+
+.product-hero__brand {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.product-hero__title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111827;
+}
+
+
+.product-hero__rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 7px;
+}
+
+.product-hero__stars {
+  font-size: 24px;
+  color: #f59e0b;
+  letter-spacing: 0.1em;
+}
+
+.product-hero__reviews-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #111827;
+    text-decoration: underline;
+  }
+}
+
+.product-hero__price-wrap {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.product-hero__price-old {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 500;
+  color: #9ca3af;
+  margin-left: 15px;
+  text-decoration: line-through;
+}
+
+.product-hero__price {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: #111827;
+}
+
+// Options: color, size
+.product-hero__option {
+  display: flex;
+  flex-direction: column;
+margin-bottom: 30px;
+}
+
+.product-hero__option-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.product-hero__colors {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.product-hero__color-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: #9ca3af;
+  }
+}
+
+.product-hero__color-btn--active {
+    border-color: #9ca3af;
+  box-shadow: 0 0 0 1px #fff;
+}
+
+.product-hero__sizes {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.product-hero__size-btn {
+  min-width: 44px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: #111827;
+    color: #111827;
+  }
+}
+
+.product-hero__size-btn--active {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.product-hero__size-btn--disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.product-hero__size-guide {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+  margin-top: 10px;
+  text-decoration: underline;
+
+  &:hover {
+    color: #111827;
+    text-decoration: underline;
+  }
+}
+
+// CTA
+.product-hero__cta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.product-hero__qty {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-hero__qty-btn {
+  width: 44px;
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #374151;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #111827;
+  }
+}
+
+.product-hero__qty-input {
+  width: 52px;
+  padding: 0.75rem 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  color: #111827;
+  background: #fff;
+  border: none;
+  border-left: 1px solid #d1d5db;
+  border-right: 1px solid #d1d5db;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.product-hero__add-cart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 400px;
+  min-width: 350px;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111827;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #1f2937;
+  }
+}
+
+.product-hero__cart-icon {
+  flex-shrink: 0;
+}
+
+.product-hero__fav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover {
+    border-color: #111827;
+    color: #111827;
+  }
+}
+
+.product-hero__delivery {
+ margin-top: 12px;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+// About block
+.product-hero__about {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.product-hero__about-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.product-hero__specs {
+  margin: 0 0 1rem;
+}
+
+.product-hero__specs--more {
+  margin: 0;
+  padding-top: 0.25rem;
+}
+
+.product-hero__spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0 0 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.product-hero__spec-dt {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.product-hero__spec-dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #374151;
+  text-align: right;
+}
+
+.product-hero__specs-trigger {
+  display: block;
+  margin-top: 1rem;
+  padding: 0;
+  font-size: 0.875rem;
+  color: #1e3a5f;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #165298;
+  }
+}
+
+.product-hero__about-collapse {
+  overflow: hidden;
+  transition: height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+// Секция акордеонов: Описание / Характеристики (как на скрине)
+.product-accordion {
+  padding-bottom: 100px;
+  background: #fff;
+}
+
+.product-accordion__item {
+  & + .product-accordion__item {
+    margin-top: 0.5rem;
+  }
+}
+
+.product-accordion__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #374151;
+  }
+}
+
+.product-accordion__title {
+  flex: 1;
+}
+
+.product-accordion__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 0.5rem;
+  color: #111827;
+  transition: transform 0.3s ease;
+}
+
+// Закрытый акордеон — стрелка вправо (поворот -90° от «вниз»)
+.product-accordion__item:not(.product-accordion__item--open) .product-accordion__icon {
+  transform: rotate(-90deg);
+}
+
+.product-accordion__collapse {
+  overflow: hidden;
+  transition: height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.product-accordion__body {
+  padding-bottom: 1.25rem;
+}
+
+.product-accordion__content {
+  max-width: 1000px;
+}
+
+.product-accordion__text {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #374151;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.product-accordion__specs {
+  margin: 0;
+  width: 100%;
+}
+
+.product-accordion__spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.product-accordion__spec-dt {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.product-accordion__spec-dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #374151;
+  text-align: right;
+}
+
+.product-accordion__item{
+    border-bottom: solid 1px #d1d5db;
+}

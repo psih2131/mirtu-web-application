@@ -1,7 +1,7 @@
 <template>
   <article class="product-card">
     <div class="product-card__img-wrap">
-      <NuxtLink to="/" class="product-card__link">
+      <NuxtLink to="/products/1" class="product-card__link">
         <img
           :src="product.img"
           :alt="product.title"

@@ -56,23 +56,29 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  maxSlidesPerView: {
+    type: Number,
+    default: 5,
+  },
 })
 
 const productsSwiperRef = ref(null)
 const currentPage = ref(1)
 const totalPages = computed(() => Math.max(1, (props.products || []).length))
 
+const maxSlides = Math.min(5, Math.max(2, props.maxSlidesPerView))
+
 const swiperApi = useSwiper(productsSwiperRef, {
-  slidesPerView: 4,
+  slidesPerView: Math.min(4, maxSlides),
   spaceBetween: 24,
   speed: 400,
   loop: true,
-  loopAdditionalSlides: 4,
+  loopAdditionalSlides: maxSlides,
   breakpoints: {
     480: { slidesPerView: 2 },
     640: { slidesPerView: 3 },
-    768: { slidesPerView: 4 },
-    1024: { slidesPerView: 5 },
+    768: { slidesPerView: Math.min(4, maxSlides) },
+    1024: { slidesPerView: maxSlides },
   },
 })
 
