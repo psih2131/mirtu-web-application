@@ -13,6 +13,9 @@ export type CartItem = {
 }
 
 export const useCounterStore = defineStore('counter', () => {
+
+    const apiUrlDomain = useRuntimeConfig().public.apiUrl
+
     const cartOpen = ref(false)
     const cartItems = ref<CartItem[]>([
         { id: '1', image: '', imageIndex: 0, name: 'Nike SB Dunk Low Pro', type: 'КРОССОВКИ', size: '42', quantity: 1, price: 45990 },
@@ -52,6 +55,8 @@ export const useCounterStore = defineStore('counter', () => {
     }
 
     return {
+ 
+
         cartOpen,
         cartItems,
         cartItemsCount,

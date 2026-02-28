@@ -19,6 +19,12 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      apiUrl: '', // overridden by NUXT_PUBLIC_API_URL from .env
+    },
+  },
+
   modules: [// другие модули
   '@pinia/nuxt', 'nuxt-swiper'],
 })

@@ -6,50 +6,50 @@
           <div class="footer__col">
             <h3 class="footer__heading">О магазине</h3>
             <ul class="footer__list">
-              <li><NuxtLink to="/about" class="footer__link">О нас</NuxtLink></li>
-              <li><NuxtLink to="/contacts" class="footer__link">Контакты</NuxtLink></li>
-              <li><NuxtLink to="/feedback" class="footer__link">Обратная связь</NuxtLink></li>
-              <li><NuxtLink to="/offer" class="footer__link">Оферта</NuxtLink></li>
-              <li><NuxtLink to="/privacy" class="footer__link">Политика конфиденциальности</NuxtLink></li>
-              <li><NuxtLink to="/blog" class="footer__link">Блог</NuxtLink></li>
+              <li><a href="#" class="footer__link">О нас</a></li>
+              <li><a href="#" class="footer__link">Контакты</a></li>
+              <li><a href="#" class="footer__link">Обратная связь</a></li>
+              <li><a href="#" class="footer__link">Оферта</a></li>
+              <li><a href="#" class="footer__link">Политика конфиденциальности</a></li>
+              <li><a href="#" class="footer__link">Блог</a></li>
             </ul>
           </div>
           <div class="footer__col">
             <h3 class="footer__heading">Помощь</h3>
             <ul class="footer__list">
-              <li><NuxtLink to="/faq" class="footer__link">FAQ</NuxtLink></li>
-              <li><NuxtLink to="/order-status" class="footer__link">Где мой заказ?</NuxtLink></li>
-              <li><NuxtLink to="/delivery" class="footer__link">Доставка и оплата</NuxtLink></li>
-              <li><NuxtLink to="/returns" class="footer__link">Обмен и возврат</NuxtLink></li>
-              <li><NuxtLink to="/loyalty" class="footer__link">Программа привилегий</NuxtLink></li>
-              <li><NuxtLink to="/authenticity" class="footer__link">Оригинальность товара</NuxtLink></li>
-              <li><NuxtLink to="/size-guide" class="footer__link">Подобрать размер</NuxtLink></li>
-              <li><NuxtLink to="/care" class="footer__link">Уход за обувью</NuxtLink></li>
+              <li><a href="#" class="footer__link">FAQ</a></li>
+              <li><a href="#" class="footer__link">Где мой заказ?</a></li>
+              <li><a href="#" class="footer__link">Доставка и оплата</a></li>
+              <li><a href="#" class="footer__link">Обмен и возврат</a></li>
+              <li><a href="#" class="footer__link">Программа привилегий</a></li>
+              <li><a href="#" class="footer__link">Оригинальность товара</a></li>
+              <li><a href="#" class="footer__link">Подобрать размер</a></li>
+              <li><a href="#" class="footer__link">Уход за обувью</a></li>
             </ul>
           </div>
           <div class="footer__col">
             <h3 class="footer__heading">Бренды</h3>
             <ul class="footer__list">
-              <li><NuxtLink to="/brands/new-balance" class="footer__link">New Balance</NuxtLink></li>
-              <li><NuxtLink to="/brands/nike" class="footer__link">Nike</NuxtLink></li>
-              <li><NuxtLink to="/brands/vans" class="footer__link">Vans</NuxtLink></li>
-              <li><NuxtLink to="/brands/puma" class="footer__link">Puma</NuxtLink></li>
-              <li><NuxtLink to="/brands/salomon" class="footer__link">Salomon</NuxtLink></li>
-              <li><NuxtLink to="/brands/the-north-face" class="footer__link">The North Face</NuxtLink></li>
-              <li><NuxtLink to="/brands/adidas" class="footer__link">adidas</NuxtLink></li>
-              <li><NuxtLink to="/brands/hugo" class="footer__link">HUGO</NuxtLink></li>
-              <li><NuxtLink to="/brands/eastpak" class="footer__link">Eastpak</NuxtLink></li>
-              <li><NuxtLink to="/brands" class="footer__link">Все бренды</NuxtLink></li>
+              <li><a href="#" class="footer__link">New Balance</a></li>
+              <li><a href="#" class="footer__link">Nike</a></li>
+              <li><a href="#" class="footer__link">Vans</a></li>
+              <li><a href="#" class="footer__link">Puma</a></li>
+              <li><a href="#" class="footer__link">Salomon</a></li>
+              <li><a href="#" class="footer__link">The North Face</a></li>
+              <li><a href="#" class="footer__link">adidas</a></li>
+              <li><a href="#" class="footer__link">HUGO</a></li>
+              <li><a href="#" class="footer__link">Eastpak</a></li>
+              <li><a href="#" class="footer__link">Все бренды</a></li>
             </ul>
           </div>
           <div class="footer__col">
             <h3 class="footer__heading">Магазин</h3>
             <ul class="footer__list">
-              <li><NuxtLink to="/catalog/new" class="footer__link">Новая коллекция</NuxtLink></li>
-              <li><NuxtLink to="/catalog/kids" class="footer__link">Детская обувь</NuxtLink></li>
-              <li><NuxtLink to="/catalog/hiker" class="footer__link">Hiker</NuxtLink></li>
-              <li><NuxtLink to="/catalog/sneakers" class="footer__link">Кроссовки</NuxtLink></li>
-              <li><NuxtLink to="/catalog/shoes" class="footer__link">Кеды</NuxtLink></li>
+              <li><a href="#" class="footer__link">Новая коллекция</a></li>
+              <li><a href="#" class="footer__link">Детская обувь</a></li>
+              <li><a href="#" class="footer__link">Hiker</a></li>
+              <li><a href="#" class="footer__link">Кроссовки</a></li>
+              <li><a href="#" class="footer__link">Кеды</a></li>
             </ul>
           </div>
           <div class="footer__col footer__col--contacts">
@@ -84,9 +84,9 @@
               <input type="checkbox" class="footer__checkbox" required>
               <span class="footer__consent-text">
                 Я даю согласие на обработку моих персональных данных в соответствии с условиями
-                <NuxtLink to="/privacy" class="footer__consent-link">политики конфиденциальности</NuxtLink>
+                <a href="#" class="footer__consent-link">политики конфиденциальности</a>
                 и
-                <NuxtLink to="/offer" class="footer__consent-link">оферты</NuxtLink>.
+                <a href="#" class="footer__consent-link">оферты</a>.
               </span>
             </label>
             <div class="footer__payments">

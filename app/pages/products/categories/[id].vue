@@ -4,6 +4,8 @@
       <nav class="category-page__breadcrumbs" aria-label="Хлебные крошки">
         <NuxtLink to="/" class="category-page__breadcrumb-link">Главная</NuxtLink>
         <span class="category-page__breadcrumb-sep">›</span>
+        <NuxtLink to="/products" class="category-page__breadcrumb-link">Каталог</NuxtLink>
+        <span class="category-page__breadcrumb-sep">›</span>
         <span class="category-page__breadcrumb-current">{{ categoryTitle }}</span>
       </nav>
 
@@ -206,7 +208,7 @@
 
         <div class="category-page__main">
           <div class="category-page__toolbar">
-            <span class="category-page__count">{{ products.length }} товаров</span>
+            <span class="category-page__count" v-if="cardsData?.total_count">{{ cardsData.total_count }} товаров</span>
             <div class="category-page__sort">
               <label for="sort-select" class="category-page__sort-label">Сортировка:</label>
               <select id="sort-select" class="category-page__sort-select">
@@ -218,9 +220,9 @@
             </div>
           </div>
 
-          <ul class="category-page__grid">
-            <li v-for="(product, idx) in products" :key="idx" class="category-page__grid-item">
-              <CardsProductCard :product="product" />
+          <ul class="category-page__grid" v-if="cardsData?.cards.length > 0">
+            <li v-for="(product, idx) in cardsData.cards" :key="idx" class="category-page__grid-item">
+              <CardsProductCard :product="convertProductData(product)" />
             </li>
           </ul>
 
@@ -236,10 +238,95 @@
 </template>
 
 <script setup>
+//Imports
+import { ref, computed, onMounted } from 'vue'
+
+import { useRuntimeConfig } from '#app';
+
+import { useRoute } from 'vue-router'
+
 import { Collapse } from 'vue-collapsed'
+
 import FieldsPriceRangeFilter from '@/components/fields/PriceRangeFilter.vue'
 
+import useAllFiltrsData from '@/composables/allFiltrsData'
+
+
+
+//Data
 const route = useRoute()
+
+const apiUrlDomain = useRuntimeConfig().public.apiUrl;
+
+const categoryId = ref(+route.params.id)
+
+const categoryTitle = ref()
+
+const allAvaliableCategories = ref([]);
+
+const  { allFiltrsData }  = await useAllFiltrsData();
+
+allAvaliableCategories.value = allFiltrsData.value.filters.categories;
+
+
+
+//API — POST /cards по ТЗ: category_ids в body, limit/offset в query
+const apiBase = apiUrlDomain.endsWith('/api') ? apiUrlDomain : apiUrlDomain.replace(/\/?$/, '') + '/api'
+const { data: cardsData } = await useFetch(`${apiBase}/cards`, {
+  method: 'POST',
+  body: {
+    category_ids: categoryId.value ? [categoryId.value] : [],
+  },
+  query: { limit: 20, offset: 0 },
+  key: `cards-category-${categoryId.value}`,
+})
+
+
+
+//Methods
+function getCategoryTitle() {
+  for(let i = 0; i < allAvaliableCategories.value.length; i++) {
+    if(allAvaliableCategories.value[i].id === categoryId.value) {
+      return allAvaliableCategories.value[i].name_ru
+    }
+  }
+  return ''
+}
+
+categoryTitle.value = getCategoryTitle()
+
+
+const convertProductData = (product) => {
+  let newProductObject = {
+    title: product.displayInfo.display_title || '',
+    subtitle: product.basicInfo.title || '',
+    price: product.displayInfo.displayPriceAmount + ' ' + product.displayInfo.displayPriceCurrencySymbol,
+    img: product.displayInfo.display_image ,
+    colors: product.description,
+    
+  }
+  return newProductObject
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const productImageModules = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
 const productImageUrls = Object.values(productImageModules).map((m) => (typeof m === 'string' ? m : m?.default ?? ''))
@@ -249,10 +336,16 @@ function getImg(index) {
 }
 
 const colorPalette = ['#1a1a1a', '#ffffff', '#c0c0c0', '#8b4513', '#2c5282', '#c53030', '#2f855a', '#744210', '#553c9a', '#b83280', '#dd6b20', '#e53e3e', '#3182ce', '#38a169']
-function pickRandomColors(count) {
-  const shuffled = [...colorPalette].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, count)
+/** Детерминированный выбор цветов — одинаковый результат на сервере и клиенте (избегает hydration mismatch) */
+function pickColorsForIndex(index, count) {
+  const start = (index * 7) % colorPalette.length
+  return Array.from({ length: count }, (_, i) => colorPalette[(start + i) % colorPalette.length])
 }
+
+
+
+
+
 
 const productRows = [
   { title: 'Nike SB Dunk Low Pro', subtitle: 'Скейт-обувь', price: '45 990 ₸', img: getImg(0), tag: 'BEST SELLER', description: 'Классика скейт-культуры.' },
@@ -273,21 +366,14 @@ const productRows = [
   { title: 'Nike Air Jordan 6 Rings', subtitle: 'Баскетбол', price: '79 990 ₸', img: getImg(1), description: 'В духе шести чемпионских колец.' },
 ]
 
-const products = productRows.map((p) => ({
+const products = productRows.map((p, i) => ({
   ...p,
-  colors: pickRandomColors(2 + Math.floor(Math.random() * 2)),
+  colors: pickColorsForIndex(i, 2 + (i % 2)),
 }))
 
 const priceRange = ref([20000, 80000])
 
-const categoryTitles = {
-  obuv: 'Обувь',
-  krossovki: 'Кроссовки',
-  kedy: 'Кеды',
-  botinki: 'Ботинки',
-}
 
-const categoryTitle = computed(() => categoryTitles[route.params.id] || 'Обувь')
 
 const openFilters = ref(['gender'])
 const filters = reactive({

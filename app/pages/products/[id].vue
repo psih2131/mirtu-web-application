@@ -284,7 +284,29 @@
 <script setup>
 import { Collapse } from 'vue-collapsed'
 
-const route = useRoute()
+import {ref, computed, reactive, onMounted} from 'vue'
+
+import { useCounterStore } from '@/stores/counter'
+
+import { useRuntimeConfig } from '#app'
+
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
+
+const store = useCounterStore()
+
+// Тестовый запрос к API согласно ТЗ: POST /cards с телом и query-параметрами
+const { data: testCards } = await useFetch(`${apiUrlDomain}/api/cards`, {
+  method: 'POST',
+  body: {},
+  query: { limit: 20, offset: 0 },
+})
+console.log('API cards:', testCards.value)
+
+
+
+
+
+
 
 const productImageModulesWebp = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
 const productImageModulesJpg = import.meta.glob('~/assets/images/products/*.jpg', { eager: true, query: '?url', import: 'default' })
@@ -298,9 +320,10 @@ function getImg(index) {
 }
 
 const colorPalette = ['#1a1a1a', '#ffffff', '#c0c0c0', '#8b4513', '#2c5282', '#c53030', '#2f855a', '#744210', '#553c9a', '#b83280', '#dd6b20', '#e53e3e', '#3182ce', '#38a169']
-function pickRandomColors(count) {
-  const shuffled = [...colorPalette].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, count)
+/** Детерминированный выбор цветов — одинаковый результат на сервере и клиенте (избегает hydration mismatch) */
+function pickColorsForIndex(index, count) {
+  const start = (index * 7) % colorPalette.length
+  return Array.from({ length: count }, (_, i) => colorPalette[(start + i) % colorPalette.length])
 }
 
 const relatedProductsRows = [
@@ -319,9 +342,9 @@ const relatedProductsRows = [
   { title: 'Converse Chuck Taylor', subtitle: 'Кеды', price: '24 990 ₸', img: getImg(5) },
   { title: 'Puma Suede Classic', subtitle: 'Кроссовки', price: '21 990 ₸', img: getImg(6) }
 ]
-const relatedProducts = relatedProductsRows.map((p) => ({
+const relatedProducts = relatedProductsRows.map((p, i) => ({
   ...p,
-  colors: pickRandomColors(2 + Math.floor(Math.random() * 2)),
+  colors: pickColorsForIndex(i, 2 + (i % 2)),
 }))
 
 const product = {
