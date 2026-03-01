@@ -1,10 +1,9 @@
 <template>
   <div class="app">
-  
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
-  
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <Preloader />
   </div>
 </template>
 

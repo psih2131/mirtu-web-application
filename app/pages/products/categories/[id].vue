@@ -12,212 +12,62 @@
       <h1 class="category-page__title">{{ categoryTitle }}</h1>
 
       <div class="category-page__layout">
+
+        <!-- Filters -->
         <aside class="category-page__sidebar">
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('type') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('type')">
-              <span>Тип товара</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
+
+          <!-- Filter Price -->
+          <FiltersFilterPrice v-model="priceRange" />
+
+          <!-- Filter Gender -->
+          <FiltersFilterGender
+            v-if="availableFilters?.filters?.genders?.length"
+            v-model="selectedGenders"
+            :genders="availableFilters.filters.genders"
+          />
+
+          <!-- Filter Brands -->
+          <FiltersFilterBrands
+            v-if="availableFilters?.filters?.brands?.length"
+            v-model="selectedBrandIds"
+            :brands="availableFilters.filters.brands"
+            :open="false"
+          />
+
+          <!-- Filter Series -->
+          <FiltersFilterSeries
+            v-if="availableFilters?.filters?.series?.length"
+            v-model="selectedSeriesIds"
+            :series="availableFilters.filters.series"
+            :selected-brand-ids="selectedBrandIds"
+            :open="false"
+          />
+
+          <!-- Buttons Apply -->
+          <div class="category-page__buttons-apply">
+            <button type="button" class="category-page__button-apply" @click="onApplyFilters">
+              Применить
             </button>
-            <Collapse :when="isFilterOpen('type')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Кроссовки</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Кеды</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Ботинки</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('size') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('size')">
-              <span>Размер</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
+            <button type="button" class="category-page__button-reset" @click="resetFilters">
+              Сбросить
             </button>
-            <Collapse :when="isFilterOpen('size')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> 38</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 39</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 40</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 41</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 42</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 43</label>
-                <label class="category-page__checkbox"><input type="checkbox"> 44</label>
-              </div>
-            </Collapse>
           </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('color') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('color')">
-              <span>Цвет</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('color')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Чёрный</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Белый</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Серый</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Синий</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Красный</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Коричневый</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('price') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('price')">
-              <span>Цена</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('price')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <FieldsPriceRangeFilter v-model="priceRange" :min="0" :max="150000" :step="1000" />
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('collection') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('collection')">
-              <span>Коллекция</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('collection')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Новая коллекция</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Распродажа</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('gender') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('gender')">
-              <span>Пол</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('gender')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox" v-model="filters.genderMen"> Мужчины</label>
-                <label class="category-page__checkbox"><input type="checkbox" v-model="filters.genderWomen"> Женщины</label>
-                <label class="category-page__checkbox"><input type="checkbox" v-model="filters.genderUnisex"> Унисекс</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('closure') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('closure')">
-              <span>Тип застёжки</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('closure')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Шнуровка</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Липучка</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Без застёжки</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('height') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('height')">
-              <span>Высота</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('height')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Низкие</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Средние</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Высокие</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('width') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('width')">
-              <span>Ширина</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('width')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Узкие</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Стандарт</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Широкие</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('tech') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('tech')">
-              <span>Технологии</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('tech')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Air</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Boost</label>
-                <label class="category-page__checkbox"><input type="checkbox"> React</label>
-              </div>
-            </Collapse>
-          </div>
-          <div class="category-page__filter" :class="{ 'category-page__filter--open': isFilterOpen('features') }">
-            <button type="button" class="category-page__filter-head" @click="toggleFilter('features')">
-              <span>Особенности</span>
-              <span class="category-page__filter-chevron" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.29289 9.29289C5.68342 8.90237 6.31658 8.90237 6.70711 9.29289L12 14.5858L17.2929 9.29289C17.6834 8.90237 18.3166 8.90237 18.7071 9.29289C19.0976 9.68342 19.0976 10.3166 18.7071 10.7071L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L5.29289 10.7071C4.90237 10.3166 4.90237 9.68342 5.29289 9.29289Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
-            <Collapse :when="isFilterOpen('features')" class="category-page__collapse">
-              <div class="category-page__filter-body">
-                <label class="category-page__checkbox"><input type="checkbox"> Водоотталкивающие</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Дышащие</label>
-                <label class="category-page__checkbox"><input type="checkbox"> Ортопедическая стелька</label>
-              </div>
-            </Collapse>
-          </div>
+
+<pre>
+selectedBrandIds: {{ selectedBrandIds }}
+selectedGenders: {{ selectedGenders }}
+selectedSeriesIds: {{ selectedSeriesIds }}
+priceRange: {{ priceRange }}
+</pre>
         </aside>
 
         <div class="category-page__main">
           <div class="category-page__toolbar">
             <span class="category-page__count" v-if="cardsData?.total_count">{{ cardsData.total_count }} товаров</span>
-            <div class="category-page__sort">
-              <label for="sort-select" class="category-page__sort-label">Сортировка:</label>
-              <select id="sort-select" class="category-page__sort-select">
-                <option value="default">По умолчанию</option>
-                <option value="price-asc">Сначала дешевле</option>
-                <option value="price-desc">Сначала дороже</option>
-                <option value="name">По названию</option>
-              </select>
-            </div>
+
+            <!-- Sort Select -->
+            <FieldsSortSelect v-model="sortParams" @update:model-value="onSortChange" />
+
           </div>
 
           <ul class="category-page__grid" v-if="cardsData?.cards.length > 0">
@@ -239,16 +89,17 @@
 
 <script setup>
 //Imports
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { useRuntimeConfig } from '#app';
 
 import { useRoute } from 'vue-router'
 
-import { Collapse } from 'vue-collapsed'
-
-import FieldsPriceRangeFilter from '@/components/fields/PriceRangeFilter.vue'
-
+import FiltersFilterBrands from '@/components/filters/FilterBrands.vue'
+import { useUiStore } from '@/stores/ui'
+import FiltersFilterGender from '@/components/filters/FilterGender.vue'
+import FiltersFilterPrice from '@/components/filters/FilterPrice.vue'
+import FiltersFilterSeries from '@/components/filters/FilterSeries.vue'
 import useAllFiltrsData from '@/composables/allFiltrsData'
 
 
@@ -270,18 +121,64 @@ allAvaliableCategories.value = allFiltrsData.value.filters.categories;
 
 
 
-//API — POST /cards по ТЗ: category_ids в body, limit/offset в query
 const apiBase = apiUrlDomain.endsWith('/api') ? apiUrlDomain : apiUrlDomain.replace(/\/?$/, '') + '/api'
-const { data: cardsData } = await useFetch(`${apiBase}/cards`, {
-  method: 'POST',
-  body: {
+
+//API — GET available filters
+const { data: availableFilters } = await useFetch(`${apiBase}/filters`, {
+  method: 'GET',
+  query: { category_ids: categoryId.value ? [categoryId.value] : [] },
+})
+console.log('availableFilters', availableFilters.value)
+
+// Filter state (must be before buildCardsBody)
+const priceRange = ref({ min: 0, max: 1000000 })
+const sortParams = ref({ sort_by: null, sort_order: null })
+const selectedBrandIds = ref([])
+const selectedGenders = ref([])
+const selectedSeriesIds = ref([])
+
+function buildCardsBody() {
+  const body = {
     category_ids: categoryId.value ? [categoryId.value] : [],
-  },
+  }
+  if (selectedBrandIds.value.length) body.brand_ids = selectedBrandIds.value
+  if (selectedSeriesIds.value.length) body.series_ids = selectedSeriesIds.value
+  if (selectedGenders.value.length) body.genders = selectedGenders.value
+  if (sortParams.value?.sort_by) {
+    body.sort_by = sortParams.value.sort_by
+    body.sort_order = sortParams.value.sort_order
+  }
+  if (priceRange.value?.min > 0) body.min_price = priceRange.value.min
+  if (priceRange.value?.max < 1000000) body.max_price = priceRange.value.max
+  return body
+}
+
+const cardsBody = ref(buildCardsBody())
+
+const uiStore = useUiStore()
+
+const { data: cardsData, execute: executeFetchCards } = await useFetch(`${apiBase}/cards`, {
+  method: 'POST',
+  body: cardsBody,
   query: { limit: 20, offset: 0 },
   key: `cards-category-${categoryId.value}`,
+  watch: false,
 })
 
+async function fetchCards() {
+  uiStore.showPreloader()
+  try {
+    cardsBody.value = buildCardsBody()
+    await executeFetchCards()
+  } finally {
 
+    setTimeout(() => {
+      uiStore.hidePreloader()
+    }, 300)
+  }
+}
+
+console.log('cardsData', cardsData.value)
 
 //Methods
 function getCategoryTitle() {
@@ -302,95 +199,28 @@ const convertProductData = (product) => {
     subtitle: product.basicInfo.title || '',
     price: product.displayInfo.displayPriceAmount + ' ' + product.displayInfo.displayPriceCurrencySymbol,
     img: product.displayInfo.display_image ,
-    colors: product.description,
-    
+    category: product.basicInfo?.category?.category_ru || '',
   }
   return newProductObject
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const productImageModules = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
-const productImageUrls = Object.values(productImageModules).map((m) => (typeof m === 'string' ? m : m?.default ?? ''))
-
-function getImg(index) {
-  return productImageUrls[index % productImageUrls.length] ?? productImageUrls[0] ?? ''
+function onApplyFilters() {
+  fetchCards()
 }
 
-const colorPalette = ['#1a1a1a', '#ffffff', '#c0c0c0', '#8b4513', '#2c5282', '#c53030', '#2f855a', '#744210', '#553c9a', '#b83280', '#dd6b20', '#e53e3e', '#3182ce', '#38a169']
-/** Детерминированный выбор цветов — одинаковый результат на сервере и клиенте (избегает hydration mismatch) */
-function pickColorsForIndex(index, count) {
-  const start = (index * 7) % colorPalette.length
-  return Array.from({ length: count }, (_, i) => colorPalette[(start + i) % colorPalette.length])
+function onSortChange() {
+  fetchCards()
 }
 
-
-
-
-
-
-const productRows = [
-  { title: 'Nike SB Dunk Low Pro', subtitle: 'Скейт-обувь', price: '45 990 ₸', img: getImg(0), tag: 'BEST SELLER', description: 'Классика скейт-культуры.' },
-  { title: 'adidas Hamburg', subtitle: 'Кроссовки', price: '32 990 ₸', img: getImg(1), description: 'Ретро-стиль adidas.' },
-  { title: 'Reebok Club C 85', subtitle: 'Женские кроссовки', price: '28 990 ₸', img: getImg(2), tag: 'BEST SELLER', description: 'Минимализм и комфорт.' },
-  { title: "Nike Blazer Low '77", subtitle: 'Мужские кроссовки', price: '49 990 ₸', img: getImg(3), description: 'Классика Nike 70-х.' },
-  { title: 'New Balance 574', subtitle: 'Беговые', price: '39 990 ₸', img: getImg(4), description: 'Для бега и прогулок.' },
-  { title: 'Converse Chuck Taylor', subtitle: 'Кеды', price: '24 990 ₸', img: getImg(5), tag: 'BEST SELLER', description: 'Узнаваемые кеды с 1917 года.' },
-  { title: 'Puma Suede Classic', subtitle: 'Кроссовки', price: '21 990 ₸', img: getImg(6), description: 'Замша и мягкая подошва.' },
-  { title: 'Vans Old Skool', subtitle: 'Скейтбординг', price: '27 990 ₸', img: getImg(7), description: 'Выбор скейтеров.' },
-  { title: 'Nike Air Jordan 11 Retro', subtitle: 'Баскетбол', price: '89 990 ₸', img: getImg(0), tag: 'СКОРО', description: 'Легендарная модель.' },
-  { title: 'Nike Air Jordan 6 Rings', subtitle: 'Баскетбол', price: '79 990 ₸', img: getImg(1), description: 'В духе шести чемпионских колец.' },
-  { title: 'Nike Air Jordan 7 Retro', subtitle: 'Баскетбол', price: '84 990 ₸', img: getImg(2), description: 'Ретро-силуэт.' },
-  { title: 'Nike Air Jordan 1 Retro High OG', subtitle: 'Классика', price: '94 990 ₸', img: getImg(3), description: 'Культовая высокая модель.' },
-  { title: 'Nike Air Jordan 6 Retro', subtitle: 'Баскетбол', price: '82 990 ₸', img: getImg(4), tag: 'BEST SELLER', description: 'Ретро с современными технологиями.' },
-  { title: 'Nike Air Jordan 1 Mid', subtitle: 'Повседневные', price: '64 990 ₸', img: getImg(5), tag: 'BEST SELLER', description: 'Универсальная середина.' },
-  { title: 'Nike Air Jordan 11 Retro', subtitle: 'Баскетбол', price: '89 990 ₸', img: getImg(0), tag: 'СКОРО', description: 'Легендарная модель.' },
-  { title: 'Nike Air Jordan 6 Rings', subtitle: 'Баскетбол', price: '79 990 ₸', img: getImg(1), description: 'В духе шести чемпионских колец.' },
-]
-
-const products = productRows.map((p, i) => ({
-  ...p,
-  colors: pickColorsForIndex(i, 2 + (i % 2)),
-}))
-
-const priceRange = ref([20000, 80000])
-
-
-
-const openFilters = ref(['gender'])
-const filters = reactive({
-  genderMen: false,
-  genderWomen: false,
-  genderUnisex: false,
-})
-
-function isFilterOpen(key) {
-  return openFilters.value.includes(key)
+function resetFilters() {
+  selectedBrandIds.value = []
+  selectedGenders.value = []
+  selectedSeriesIds.value = []
+  priceRange.value = { min: 0, max: 1000000 }
+  sortParams.value = { sort_by: null, sort_order: null }
+  fetchCards()
 }
 
-function toggleFilter(key) {
-  if (openFilters.value.includes(key)) {
-    openFilters.value = openFilters.value.filter((k) => k !== key)
-  } else {
-    openFilters.value = [...openFilters.value, key]
-  }
-}
 </script>

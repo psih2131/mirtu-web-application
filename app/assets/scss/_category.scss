@@ -121,6 +121,48 @@
   background: #fafafa;
 }
 
+.category-page__buttons-apply {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.category-page__button-apply,
+.category-page__button-reset {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.category-page__button-apply {
+  border: none;
+  background: #111827;
+  color: #fff;
+  text-align: center;
+
+  &:hover {
+    background: #1f2937;
+  }
+}
+
+.category-page__button-reset {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+}
+
 .category-page__checkbox {
   display: flex;
   align-items: center;

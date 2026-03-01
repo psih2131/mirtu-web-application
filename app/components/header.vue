@@ -2,7 +2,7 @@
   <div class="header">
     <div class="container">
       <div class="header__top">
-        <NuxtLink to="" class="header__logo">
+        <NuxtLink to="/" class="header__logo">
           <img
             src="@/assets/images/img/header-logo.png"
             alt=""
@@ -157,24 +157,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import headerSearch from "@/components/fields/headerSearch.vue";
+import { ref } from 'vue'
+import headerSearch from '@/components/fields/headerSearch.vue'
+import useAllFiltrsData from '@/composables/allFiltrsData'
+import { useCounterStore } from '@/stores/counter'
 
-import useAllFiltrsData from "@/composables/allFiltrsData";
+const allAvaliableCategories = ref([])
+const { allFiltrsData } = await useAllFiltrsData()
+allAvaliableCategories.value = allFiltrsData.value.filters.categories
 
-const allAvaliableCategories = ref([]);
-const  { allFiltrsData }  = await useAllFiltrsData();
-console.log('useAllFiltrsData',allFiltrsData.value)
-
-allAvaliableCategories.value = allFiltrsData.value.filters.categories;
-
-
-// Тестовый запрос к API согласно ТЗ: POST /cards с телом и query-параметрами
-// const { data: categoriesApiData } = await useFetch(`${apiUrlDomain}/api/filters?type=categories`);
-// console.log("API categories:", categoriesApiData.value);
-
+const store = useCounterStore()
 
 function openCart() {
-  store.openCart();
+  store.openCart()
 }
 </script>
