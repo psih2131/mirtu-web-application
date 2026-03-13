@@ -305,6 +305,12 @@ try {
 }
 const { data: cardData } = cardDataRef
 
+const { data: reviewsData } = await useFetch(`${apiBase}/reviews/card/${spu}`, {
+  method: 'GET',
+  key: `reviews-card-${spu}`,
+})
+console.log('Отзывы товара:', reviewsData.value)
+
 watch(cardData, (val) => {
   console.log('cardData:', val)
 }, { immediate: true })

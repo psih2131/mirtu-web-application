@@ -80,7 +80,14 @@
             </svg>
           </div>
 
-          <div class="header__store-control-element header-store-control" @click="openAuthModal">
+          <div
+            class="header__store-control-element header-store-control"
+            role="button"
+            aria-label="Войти"
+            tabindex="0"
+            @click="openAuthModal"
+            @keydown.enter="openAuthModal"
+          >
             <svg
               width="24"
               height="24"

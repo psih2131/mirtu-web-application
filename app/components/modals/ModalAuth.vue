@@ -13,16 +13,19 @@
     </button>
     <h2 class="modal-auth__title">Вход</h2>
     <form class="modal-auth__form" @submit.prevent="onSubmit">
+      <div v-if="serverError" class="modal-auth__server-error">{{ serverError }}</div>
       <div class="modal-auth__field">
-        <label for="auth-login" class="modal-auth__label">Логин</label>
+        <label for="auth-email" class="modal-auth__label">Email</label>
         <input
-          id="auth-login"
-          v-model="login"
-          type="text"
+          id="auth-email"
+          v-model="email"
+          type="email"
           class="modal-auth__input"
-          placeholder="Введите логин"
-          autocomplete="username"
+          :class="{ 'modal-auth__input--error': errors.email }"
+          placeholder="Введите email"
+          autocomplete="email"
         >
+        <p v-if="errors.email" class="modal-auth__error">{{ errors.email }}</p>
       </div>
       <div class="modal-auth__field">
         <label for="auth-password" class="modal-auth__label">Пароль</label>
@@ -32,9 +35,11 @@
             v-model="password"
             :type="passwordVisible ? 'text' : 'password'"
             class="modal-auth__input"
+            :class="{ 'modal-auth__input--error': errors.password }"
             placeholder="Введите пароль"
             autocomplete="current-password"
           >
+          <p v-if="errors.password" class="modal-auth__error">{{ errors.password }}</p>
           <button
             type="button"
             class="modal-auth__password-toggle"
@@ -55,8 +60,8 @@
           Забыли пароль?
         </button>
       </div>
-      <button type="submit" class="modal-auth__submit">
-        Авторизоваться
+      <button type="submit" class="modal-auth__submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Вход...' : 'Авторизоваться' }}
       </button>
     </form>
     <button type="button" class="modal-auth__register" @click="openRegister">
@@ -67,9 +72,31 @@
 
 <script setup>
 const modalStore = useModalStore()
-const login = ref('')
+const email = ref('')
 const password = ref('')
 const passwordVisible = ref(false)
+const isSubmitting = ref(false)
+const serverError = ref('')
+const errors = ref({ email: '', password: '' })
+
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
+const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validate() {
+  const e = { email: '', password: '' }
+  if (!email.value.trim()) {
+    e.email = 'Введите email'
+  } else if (!emailRegex.test(email.value.trim())) {
+    e.email = 'Неверный формат email'
+  }
+  if (!password.value) {
+    e.password = 'Введите пароль'
+  }
+  errors.value = e
+  return !e.email && !e.password
+}
 
 function closeModal() {
   modalStore.closeModal()
@@ -83,7 +110,36 @@ function openRegister() {
   modalStore.openModal('register')
 }
 
-function onSubmit() {
-  // TODO: auth logic — после успешной авторизации вызывать closeModal()
+async function onSubmit() {
+  serverError.value = ''
+  if (!validate()) return
+
+  isSubmitting.value = true
+  try {
+    const res = await $fetch(`${apiBase}/auth/login`, {
+      method: 'POST',
+      body: {
+        email: email.value.trim(),
+        password: password.value,
+      },
+      credentials: 'include',
+    })
+    console.log('Ответ сервера при авторизации:', res)
+    closeModal()
+    await navigateTo('/user')
+  } catch (err) {
+    const e = err
+    const detail = e?.data?.detail ?? e?.response?._data?.detail
+    const status = e?.statusCode ?? e?.response?.status
+    if (status === 401) {
+      serverError.value = 'Неверный email или пароль'
+    } else {
+      serverError.value = typeof detail === 'string' ? detail : 'Ошибка авторизации'
+    }
+
+    console.log('Ошибка авторизации:', err)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>

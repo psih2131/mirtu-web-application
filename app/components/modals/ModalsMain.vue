@@ -6,6 +6,7 @@
         <ModalAuth v-if="store.modalController.name === 'auth'" />
         <ModalForgotPassword v-if="store.modalController.name === 'forgot-password'" />
         <ModalRegister v-if="store.modalController.name === 'register'" />
+        <ModalConfirmEmail v-if="store.modalController.name === 'confirm-email'" />
       </div>
     </Transition>
   </Teleport>
@@ -13,9 +14,14 @@
 
 <script setup>
 import { useModalStore } from '@/stores/modal'
+
 import ModalAuth from '@/components/modals/ModalAuth.vue'
+
 import ModalForgotPassword from '@/components/modals/ModalForgotPassword.vue'
+
 import ModalRegister from '@/components/modals/ModalRegister.vue'
+
+import ModalConfirmEmail from '@/components/modals/ModalConfirmEmail.vue'
 
 const store = useModalStore()
 
