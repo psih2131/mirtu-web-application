@@ -541,7 +541,7 @@
 <script setup>
 import { Collapse } from "vue-collapsed";
 import FieldsPriceRangeFilter from "@/components/fields/PriceRangeFilter.vue";
-import {ref, reactive} from "vue";
+import {ref, reactive, onMounted} from "vue";
 import { useCounterStore } from "@/stores/counter";
 import { useRuntimeConfig } from "#app";
 
@@ -552,7 +552,7 @@ const store = useCounterStore();
 const route = useRoute();
 
 // Тестовый запрос к API согласно ТЗ: POST /cards с телом и query-параметрами
-const { data: testCards } = await useFetch(`${apiUrlDomain}/api/cards`, {
+const { data: testCards } = await useFetch(`http://5.129.241.20:8000/api/cards`, {
   method: "POST",
   body: {},
   query: { limit: 20, offset: 0 },
@@ -748,4 +748,35 @@ function toggleFilter(key) {
     openFilters.value = [...openFilters.value, key];
   }
 }
+
+
+
+// onMounted(async () => {
+//   const url = `http://5.129.241.20:8000/api/cards`
+//   const res = await fetch(url, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({
+//   "brand_ids": [
+//     0
+//   ],
+//   "category_ids": [
+//     0
+//   ],
+//   "series_ids": [
+//     0
+//   ],
+//   "genders": [
+//     "male"
+//   ],
+//   "sort_by": "price",
+//   "sort_order": "asc",
+//   "search_word": "string",
+//   "min_price": 0,
+//   "max_price": 0
+// }),
+//   })
+//   const data = await res.json()
+//   console.log('onMounted fetch — посты категории:', data)
+// })
 </script>

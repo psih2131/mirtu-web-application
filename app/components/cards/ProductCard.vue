@@ -2,7 +2,7 @@
   <article class="product-card">
     <div class="product-card__top">
       <div class="product-card__img-wrap">
-        <NuxtLink to="/products/1" class="product-card__link">
+        <NuxtLink :to="`/products/${product.spu}`" class="product-card__link">
           <img
             :src="product.img"
             :alt="product.title"

@@ -1,0 +1,262 @@
+// Система модальных окон — затемнение фона, выезд снизу
+// Общие стили для всех модалок
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.modal-enter-active .modals__overlay,
+.modal-leave-active .modals__overlay {
+  transition: opacity 0.5s ease;
+}
+
+.modal-enter-active .modals__panel,
+.modal-leave-active .modals__panel {
+  transition: transform 0.5s ease;
+}
+
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-enter-to,
+.modal-leave-from {
+  opacity: 1;
+}
+
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modals__overlay,
+.modal-leave-to .modals__overlay {
+  opacity: 0;
+}
+
+.modal-enter-to .modals__overlay,
+.modal-leave-from .modals__overlay {
+  opacity: 1;
+}
+
+.modal-enter-from .modals__panel {
+  transform: translateY(100%);
+}
+
+.modal-enter-to .modals__panel,
+.modal-leave-from .modals__panel {
+  transform: translateY(0);
+}
+
+.modal-leave-to .modals__panel,
+.modal-leave-to.modals__panel {
+  transform: translateY(100%);
+}
+
+.modals__wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modals__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.modals__panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 40px);
+  margin: 20px;
+  background: #fff;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+// Модалка авторизации
+.modal-auth {
+  position: relative;
+  padding: 2rem 2rem 1.75rem;
+  background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+}
+
+.modal-auth__accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #111827 0%, #374151 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-auth__title {
+  margin: 0 0 1.75rem;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111827;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.modal-auth__field {
+  margin-bottom: 1.25rem;
+}
+
+.modal-auth__password-wrap {
+  position: relative;
+}
+
+.modal-auth__password-wrap .modal-auth__input {
+  padding-right: 48px;
+}
+
+.modal-auth__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: color 0.2s, background 0.2s;
+
+  &:hover {
+    color: #374151;
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.modal-auth__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.01em;
+}
+
+.modal-auth__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  color: #111827;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+  }
+}
+
+.modal-auth__forgot {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #111827;
+  }
+}
+
+.modal-auth__submit {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111827;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.01em;
+
+  &:hover {
+    background: #1f2937;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.modal-auth__register {
+  display: block;
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: transparent;
+  transition: color 0.2s, text-decoration-color 0.2s;
+
+  &:hover {
+    color: #111827;
+    text-decoration-color: #111827;
+  }
+}
+
+.modal-auth__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #111827;
+  }
+}

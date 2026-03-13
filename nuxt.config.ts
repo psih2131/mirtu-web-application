@@ -7,6 +7,12 @@ export default defineNuxtConfig({
   css: ['~/assets/scss/main.scss'],
 
   vite: {
+    server: {
+      allowedHosts: ['unsolacing-sharee-appointable.ngrok-free.dev'],
+      hmr: {
+        port: 0, // случайный свободный порт при каждом запуске
+      },
+    },
     css: {
       preprocessorMaxWorkers: true, // number of CPUs minus 1
       preprocessorOptions: {

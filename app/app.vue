@@ -4,6 +4,7 @@
       <NuxtPage />
     </NuxtLayout>
     <Preloader />
+    <ModalsMain />
   </div>
 </template>
 

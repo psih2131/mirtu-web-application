@@ -18,6 +18,7 @@
         </div>
 
         <div class="header__store-controls-row">
+
           <div
             class="header__store-control-element header-store-control header-store-control--cart"
             role="button"
@@ -79,7 +80,7 @@
             </svg>
           </div>
 
-          <div class="header__store-control-element header-store-control">
+          <div class="header__store-control-element header-store-control" @click="openAuthModal">
             <svg
               width="24"
               height="24"
@@ -161,14 +162,20 @@ import { ref } from 'vue'
 import headerSearch from '@/components/fields/headerSearch.vue'
 import useAllFiltrsData from '@/composables/allFiltrsData'
 import { useCounterStore } from '@/stores/counter'
+import { useModalStore } from '@/stores/modal'
 
 const allAvaliableCategories = ref([])
 const { allFiltrsData } = await useAllFiltrsData()
 allAvaliableCategories.value = allFiltrsData.value.filters.categories
 
 const store = useCounterStore()
+const modalStore = useModalStore()
 
 function openCart() {
   store.openCart()
+}
+
+function openAuthModal() {
+  modalStore.openModal('auth')
 }
 </script>

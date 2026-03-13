@@ -63,21 +63,21 @@ priceRange: {{ priceRange }}
 
         <div class="category-page__main">
           <div class="category-page__toolbar">
-            <span class="category-page__count" v-if="cardsData?.total_count">{{ cardsData.total_count }} товаров</span>
+            <span class="category-page__count" v-if="totalCount">{{ totalCount }} товаров</span>
 
             <!-- Sort Select -->
             <FieldsSortSelect v-model="sortParams" @update:model-value="onSortChange" />
 
           </div>
 
-          <ul class="category-page__grid" v-if="cardsData?.cards.length > 0">
-            <li v-for="(product, idx) in cardsData.cards" :key="idx" class="category-page__grid-item">
+          <ul class="category-page__grid" v-if="displayCards.length > 0">
+            <li v-for="(product, idx) in displayCards" :key="idx" class="category-page__grid-item">
               <CardsProductCard :product="convertProductData(product)" />
             </li>
           </ul>
 
-          <div class="category-page__load-more-wrap">
-            <button type="button" class="category-page__load-more">
+          <div class="category-page__load-more-wrap" v-if="hasMore">
+            <button type="button" class="category-page__load-more" @click="loadMore">
               Загрузить ещё
             </button>
           </div>
@@ -88,55 +88,85 @@ priceRange: {{ priceRange }}
 </template>
 
 <script setup>
-//Imports
-import { ref, computed, watch } from 'vue'
-
-import { useRuntimeConfig } from '#app';
-
+// Imports
+import { ref, computed, onMounted } from 'vue'
+import { useRuntimeConfig } from '#app'
 import { useRoute } from 'vue-router'
 
 import FiltersFilterBrands from '@/components/filters/FilterBrands.vue'
-import { useUiStore } from '@/stores/ui'
+
 import FiltersFilterGender from '@/components/filters/FilterGender.vue'
+
 import FiltersFilterPrice from '@/components/filters/FilterPrice.vue'
+
 import FiltersFilterSeries from '@/components/filters/FilterSeries.vue'
+
 import useAllFiltrsData from '@/composables/allFiltrsData'
 
+import { useUiStore } from '@/stores/ui'
 
-
-//Data
+// Variables
 const route = useRoute()
 
-const apiUrlDomain = useRuntimeConfig().public.apiUrl;
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
 
 const categoryId = ref(+route.params.id)
 
 const categoryTitle = ref()
 
-const allAvaliableCategories = ref([]);
-
-const  { allFiltrsData }  = await useAllFiltrsData();
-
-allAvaliableCategories.value = allFiltrsData.value.filters.categories;
+const allAvaliableCategories = ref([])
 
 
+const { allFiltrsData } = await useAllFiltrsData()
+allAvaliableCategories.value = allFiltrsData.value.filters.categories
 
 const apiBase = apiUrlDomain.endsWith('/api') ? apiUrlDomain : apiUrlDomain.replace(/\/?$/, '') + '/api'
 
-//API — GET available filters
 const { data: availableFilters } = await useFetch(`${apiBase}/filters`, {
   method: 'GET',
   query: { category_ids: categoryId.value ? [categoryId.value] : [] },
 })
 console.log('availableFilters', availableFilters.value)
 
-// Filter state (must be before buildCardsBody)
 const priceRange = ref({ min: 0, max: 1000000 })
 const sortParams = ref({ sort_by: null, sort_order: null })
 const selectedBrandIds = ref([])
 const selectedGenders = ref([])
 const selectedSeriesIds = ref([])
 
+const uiStore = useUiStore()
+
+const cardsBody = ref(buildCardsBody())
+
+const limit = 20
+const loadedMoreCards = ref([])
+
+const { data: cardsData, execute: executeFetchCards } = await useFetch(`${apiBase}/cards`, {
+  method: 'POST',
+  body: cardsBody,
+  query: { limit, offset: 0 },
+  key: `cards-category-${categoryId.value}`,
+  watch: false,
+})
+
+const displayCards = computed(() => [
+  ...(cardsData.value?.cards || []),
+  ...loadedMoreCards.value,
+])
+
+const totalCount = computed(() => cardsData.value?.total_count ?? 0)
+
+const hasMore = computed(() => {
+  const total = totalCount.value
+  const loaded = displayCards.value.length
+  return total > loaded
+})
+
+console.log('cardsData', cardsData.value)
+
+categoryTitle.value = getCategoryTitle()
+
+// Methods
 function buildCardsBody() {
   const body = {
     category_ids: categoryId.value ? [categoryId.value] : [],
@@ -153,58 +183,57 @@ function buildCardsBody() {
   return body
 }
 
-const cardsBody = ref(buildCardsBody())
-
-const uiStore = useUiStore()
-
-const { data: cardsData, execute: executeFetchCards } = await useFetch(`${apiBase}/cards`, {
-  method: 'POST',
-  body: cardsBody,
-  query: { limit: 20, offset: 0 },
-  key: `cards-category-${categoryId.value}`,
-  watch: false,
-})
-
 async function fetchCards() {
+  loadedMoreCards.value = []
   uiStore.showPreloader()
   try {
     cardsBody.value = buildCardsBody()
     await executeFetchCards()
   } finally {
-
     setTimeout(() => {
       uiStore.hidePreloader()
     }, 300)
   }
 }
 
-console.log('cardsData', cardsData.value)
+async function loadMore() {
+  if (!hasMore.value) return
+  uiStore.showPreloader()
+  try {
+    const body = buildCardsBody()
+    const offset = displayCards.value.length
+    const result = await $fetch(`${apiBase}/cards`, {
+      method: 'POST',
+      body,
+      query: { limit, offset },
+    })
+    loadedMoreCards.value = [...loadedMoreCards.value, ...(result?.cards || [])]
+  } finally {
+    setTimeout(() => {
+      uiStore.hidePreloader()
+    }, 300)
+  }
+}
 
-//Methods
 function getCategoryTitle() {
-  for(let i = 0; i < allAvaliableCategories.value.length; i++) {
-    if(allAvaliableCategories.value[i].id === categoryId.value) {
+  for (let i = 0; i < allAvaliableCategories.value.length; i++) {
+    if (allAvaliableCategories.value[i].id === categoryId.value) {
       return allAvaliableCategories.value[i].name_ru
     }
   }
   return ''
 }
 
-categoryTitle.value = getCategoryTitle()
-
-
-const convertProductData = (product) => {
-  let newProductObject = {
+function convertProductData(product) {
+  return {
+    spu: product.basicInfo.spuPoizon || '',
     title: product.displayInfo.display_title || '',
     subtitle: product.basicInfo.title || '',
     price: product.displayInfo.displayPriceAmount + ' ' + product.displayInfo.displayPriceCurrencySymbol,
-    img: product.displayInfo.display_image ,
+    img: product.displayInfo.display_image,
     category: product.basicInfo?.category?.category_ru || '',
   }
-  return newProductObject
 }
-
-
 
 function onApplyFilters() {
   fetchCards()
@@ -222,5 +251,6 @@ function resetFilters() {
   sortParams.value = { sort_by: null, sort_order: null }
   fetchCards()
 }
+
 
 </script>

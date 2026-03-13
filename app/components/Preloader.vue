@@ -1,8 +1,10 @@
 <template>
   <Teleport to="body">
-    <div v-if="preloaderVisible" class="preloader">
-      <div class="preloader__spinner" />
-    </div>
+    <Transition name="preloader">
+      <div v-if="preloaderVisible" class="preloader">
+        <div class="preloader__spinner" />
+      </div>
+    </Transition>
   </Teleport>
 </template>
 
@@ -22,14 +24,14 @@ const { preloaderVisible } = storeToRefs(uiStore)
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .preloader__spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #e5e7eb;
-  border-top-color: #111827;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: preloader-spin 0.8s linear infinite;
 }
@@ -38,5 +40,14 @@ const { preloaderVisible } = storeToRefs(uiStore)
   to {
     transform: rotate(360deg);
   }
+}
+
+.preloader-enter-active,
+.preloader-leave-active {
+  transition: opacity 0.2s ease;
+}
+.preloader-enter-from,
+.preloader-leave-to {
+  opacity: 0;
 }
 </style>
