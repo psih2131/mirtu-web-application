@@ -1,11 +1,11 @@
 <template>
   <div class="app-wrapper">
 
-    <headerComponent />
+    <headerComponent :dataContacts="aboutData" />
 
     <slot/>
 
-    <footerComponent />
+    <footerComponent :dataContacts="aboutData" />
 
     <cartComponent />
     
@@ -19,5 +19,11 @@ import cartComponent from '@/components/cart.vue'
 import { useCounterStore } from '@/stores/counter'
 
 const counterStore = useCounterStore()
+
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
+const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
+
+const { data: aboutData } = await useFetch(`${apiBase}/about`, { method: 'GET' })
+console.log('About page data:', aboutData.value)
 </script>
 

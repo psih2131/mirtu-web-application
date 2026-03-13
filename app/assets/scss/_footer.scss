@@ -275,3 +275,12 @@
   .footer__col--newsletter {
     grid-column: auto;
   }
+
+.footer__socials{
+  display: flex;
+  margin-top: 20px;
+}
+.footer__social-link{
+  display: block;
+  margin-right: 10px;
+}

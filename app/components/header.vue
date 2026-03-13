@@ -12,8 +12,8 @@
 
         <headerSearch />
 
-        <div class="header__phone">
-          <a href="" class="header__phone-value">+7(777) 073-30-70</a>
+        <div class="header__phone" v-if="dataContacts?.phone_contact">
+          <a :href="`tel:${dataContacts.phone_contact}`" class="header__phone-value" v-html="dataContacts.phone_contact.replace(/\s/g, '')"></a>
           <p class="header__phone-hour-work">Ежедневно с 10:00 до 21:00</p>
         </div>
 
@@ -163,6 +163,13 @@ import headerSearch from '@/components/fields/headerSearch.vue'
 import useAllFiltrsData from '@/composables/allFiltrsData'
 import { useCounterStore } from '@/stores/counter'
 import { useModalStore } from '@/stores/modal'
+
+const props = defineProps({
+  dataContacts: {
+    type: Object,
+    required: true,
+  },
+})
 
 const allAvaliableCategories = ref([])
 const { allFiltrsData } = await useAllFiltrsData()
