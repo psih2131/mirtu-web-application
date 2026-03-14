@@ -25,7 +25,8 @@
             type="button"
             class="product-card__action-btn product-card__action-btn--cart"
             aria-label="Добавить в корзину"
-            @click.stop=""
+            :disabled="isAddingToCart"
+            @click="onAddToCart()"
           >
             <svg width="20" height="20" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M7.875 19.25C8.35825 19.25 8.75 18.8582 8.75 18.375C8.75 17.8918 8.35825 17.5 7.875 17.5C7.39175 17.5 7 17.8918 7 18.375C7 18.8582 7.39175 19.25 7.875 19.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -61,18 +62,70 @@
         </div> -->
       </div>
     </div>
-   
-    
   </article>
 </template>
 
 <script setup>
-defineProps({
+//imports
+import { ref } from 'vue'
+import { useUiStore } from '@/stores/ui'
+import { useModalStore } from '@/stores/modal'
+import { useCounterStore } from '@/stores/counter'
+
+//data
+const uiStore = useUiStore()
+const modalStore = useModalStore()
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
+const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
+
+//props
+const props = defineProps({
   product: {
     type: Object,
     required: true,
   },
 })
+
+const isAddingToCart = ref(false)
+
+//methods
+async function onAddToCart() {
+  const p = props.product
+  const skuId = p.sku_id_poizon ?? p.spu
+  const priceAmount = p.price_amount ?? parsePriceAmount(p.price)
+  const cartItems = {
+    sku_id_poizon: skuId,
+    article: p.article || '',
+    title: p.title || '',
+    quantity: 1,
+    price_amount: Number(priceAmount) || 0,
+    currency_code: p.currency_code || 'RUB',
+    image_url: p.image_url || p.img || '',
+  }
+
+  isAddingToCart.value = true
+  try {
+    uiStore.showPreloader()
+    await $fetch(`${apiBase}/cart/items`, {
+      method: 'POST',
+      body: cartItems,
+      credentials: 'include',
+    })
+    // Корзина открывается только после успешного ответа
+    useCounterStore().openCart()
+  } catch (error) {
+    const code = error?.statusCode ?? error?.status ?? error?.response?.status
+    if (code === 401 || code === 403) {
+      // При ошибке авторизации — только модалка, корзина не открывается
+      modalStore.openModal('auth-required')
+    } else {
+      console.error('Add to cart error:', error)
+    }
+  } finally {
+    uiStore.hidePreloader()
+    isAddingToCart.value = false
+  }
+}
 
 function formatPrice(price) {
   if (price == null || price === '') return ''
@@ -86,6 +139,13 @@ function formatPrice(price) {
   const rounded = Math.round(num)
   const formatted = rounded.toLocaleString('ru-RU', { maximumFractionDigits: 0 })
   return currency ? `${formatted} ${currency}` : formatted
+}
+
+function parsePriceAmount(price) {
+  if (price == null || price === '') return 0
+  const str = String(price)
+  const match = str.match(/^([\d\s.,]+)/)
+  return match ? parseFloat(match[1].replace(/\s/g, '').replace(',', '.')) || 0 : 0
 }
 
 function isLightColor(hex) {

@@ -56,7 +56,7 @@
 
             <div class="product-hero__price-wrap">
               <span class="product-hero__price">{{ productPrice }}</span>
-              <span class="product-hero__price-old">{{ productOldPrice || '—' }}</span>
+              <span v-if="productOldPrice" class="product-hero__price-old">{{ productOldPrice }}</span>
             </div>
 
             <div v-if="productColor" class="product-hero__option">
@@ -64,7 +64,7 @@
             </div>
 
             <div class="product-hero__option">
-              <span class="product-hero__option-label">Размер: {{ selectedVariant?.args?.Размер || '—' }}</span>
+              <span class="product-hero__option-label">Размер: {{ selectedVariant?.args?.Размер ?? selectedVariant?.style_value ?? '—' }}</span>
               <div class="product-hero__sizes">
                 <button
                   v-for="(variant, i) in variants"
@@ -78,7 +78,7 @@
                   :disabled="!variant.isAvailable"
                   @click="selectVariant(i)"
                 >
-                  {{ variant.args?.Размер || '—' }}
+                  {{ variant.args?.Размер ?? variant.style_value ?? '—' }}
                 </button>
               </div>
               <button
@@ -93,7 +93,12 @@
             </div>
 
             <div v-if="hasAvailableSizes" class="product-hero__cta">
-              <button type="button" class="product-hero__add-cart">
+              <button
+                type="button"
+                class="product-hero__add-cart"
+                :disabled="isAddingToCart"
+                @click="onAddToCart"
+              >
                 <svg class="product-hero__cart-icon" width="20" height="20" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M7.875 19.25C8.35825 19.25 8.75 18.8582 8.75 18.375C8.75 17.8918 8.35825 17.5 7.875 17.5C7.39175 17.5 7 17.8918 7 18.375C7 18.8582 7.39175 19.25 7.875 19.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M17.5 19.25C17.9832 19.25 18.375 18.8582 18.375 18.375C18.375 17.8918 17.9832 17.5 17.5 17.5C17.0168 17.5 16.625 17.8918 16.625 18.375C16.625 18.8582 17.0168 19.25 17.5 19.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -101,6 +106,7 @@
                 </svg>
                 Добавить в корзину
               </button>
+
               <div class="product-hero__qty">
                 <button type="button" class="product-hero__qty-btn" aria-label="Уменьшить" @click="quantity = Math.max(1, quantity - 1)">
                   −
@@ -118,6 +124,7 @@
                   +
                 </button>
               </div>
+
             </div>
 
             <div v-else class="product-hero__out-of-stock">
@@ -281,15 +288,17 @@ import { Collapse } from 'vue-collapsed'
 import { ref, computed, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useRuntimeConfig } from '#app'
-import { useCounterStore } from '@/stores/counter'
 import { useUiStore } from '@/stores/ui'
+import { useModalStore } from '@/stores/modal'
+import { useCounterStore } from '@/stores/counter'
 
 const route = useRoute()
 const apiUrlDomain = useRuntimeConfig().public.apiUrl
-const apiBase = apiUrlDomain.endsWith('/api') ? apiUrlDomain : apiUrlDomain.replace(/\/?$/, '') + '/api'
+const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
 
-const store = useCounterStore()
 const uiStore = useUiStore()
+const modalStore = useModalStore()
+const counterStore = useCounterStore()
 
 const spu = route.params.id
 
@@ -300,20 +309,11 @@ try {
     method: 'GET',
     key: `card-${spu}`,
   })
+  console.log('cardDataRef', cardDataRef)
 } finally {
   uiStore.hidePreloader()
 }
 const { data: cardData } = cardDataRef
-
-const { data: reviewsData } = await useFetch(`${apiBase}/reviews/card/${spu}`, {
-  method: 'GET',
-  key: `reviews-card-${spu}`,
-})
-console.log('Отзывы товара:', reviewsData.value)
-
-watch(cardData, (val) => {
-  console.log('cardData:', val)
-}, { immediate: true })
 
 const breadcrumbs = computed(() => {
   const bi = cardData.value?.basicInfo
@@ -420,8 +420,43 @@ const productPrice = computed(() => {
   return '—'
 })
 
-const productOldPrice = computed(() => '52 990 ₽')
+const productOldPrice = computed(() => null)
 
+const isAddingToCart = ref(false)
+
+async function onAddToCart() {
+
+
+  const cartItems = {
+    sku_id_poizon: selectedVariant.value?.skuIdPoizon ?? cardData.value?.basicInfo?.spuPoizon ?? '',
+    article: cardData.value?.basicInfo?.articlePoizon || '',
+    title: [cardData.value?.displayInfo?.display_title || '', selectedVariant.value?.args?.Размер ?? selectedVariant.value?.style_value].filter(Boolean).join(' — Размер: '),
+    quantity: quantity.value,
+    price_amount: Number(selectedVariant.value?.priceAmount ?? cardData.value?.displayInfo?.displayPriceAmount ?? 0) || 0,
+    currency_code: cardData.value?.displayInfo?.displayPriceCurrencyCode || 'KZT',
+    image_url: cardData.value?.displayInfo?.display_image || '',
+  }
+  isAddingToCart.value = true
+  try {
+    uiStore.showPreloader()
+    await $fetch(`${apiBase}/cart/items`, {
+      method: 'POST',
+      body: cartItems,
+      credentials: 'include',
+    })
+    counterStore.openCart()
+  } catch (error) {
+    const code = error?.statusCode ?? error?.status ?? error?.response?.status
+    if (code === 401 || code === 403) {
+      modalStore.openModal('auth-required')
+    } else {
+      console.error('Add to cart error:', error)
+    }
+  } finally {
+    uiStore.hidePreloader()
+    isAddingToCart.value = false
+  }
+}
 
 function selectVariant(index) {
   const v = variants.value[index]
@@ -439,26 +474,6 @@ watch(
   },
   { immediate: true }
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const productImageModulesWebp = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
 const productImageModulesJpg = import.meta.glob('~/assets/images/products/*.jpg', { eager: true, query: '?url', import: 'default' })
 const productImageUrls = [
@@ -499,6 +514,7 @@ const relatedProducts = relatedProductsRows.map((p, i) => ({
 }))
 
 const quantity = ref(1)
+
 const accordionOpen = reactive({ description: true, specs: false, care: false, payment: false, delivery: false, return: false })
 
 const commonBlocks = computed(() => {

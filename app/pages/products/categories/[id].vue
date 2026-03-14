@@ -227,9 +227,12 @@ function getCategoryTitle() {
 function convertProductData(product) {
   return {
     spu: product.basicInfo.spuPoizon || '',
+    article: product.basicInfo.articlePoizon || '',
     title: product.displayInfo.display_title || '',
     subtitle: product.basicInfo.title || '',
     price: product.displayInfo.displayPriceAmount + ' ' + product.displayInfo.displayPriceCurrencySymbol,
+    price_amount: product.displayInfo.displayPriceAmount || '',
+    currency_code: product.displayInfo.displayPriceCurrency || '',
     img: product.displayInfo.display_image,
     category: product.basicInfo?.category?.category_ru || '',
   }

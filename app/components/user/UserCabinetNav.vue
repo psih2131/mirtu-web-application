@@ -69,6 +69,11 @@
 import avatarImg1 from '~/assets/images/img/header-logo.png'
 import avatarImg2 from '~/assets/images/brends/0d9a80d8726234ca418ef6cde0c523d1.svg'
 import avatarImg3 from '~/assets/images/brends/3f7fe697e8a65cdae39c543150e251d8.svg'
+import { useUserStore } from '@/stores/user'
+import { useCounterStore } from '@/stores/counter'
+
+const userStore = useUserStore()
+const counterStore = useCounterStore()
 
 interface UserData {
   id: string
@@ -99,6 +104,9 @@ async function onLogout() {
       method: 'POST',
       credentials: 'include',
     })
+    userStore.changeLocalstorageAuthStatus(false)
+    userStore.changeUserName(null)
+    counterStore.setCartItems([])
     console.log('Ответ сервера при выходе:', res)
   } catch (err) {
     console.log('Ошибка при выходе:', err)

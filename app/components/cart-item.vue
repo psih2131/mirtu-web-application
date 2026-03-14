@@ -3,20 +3,17 @@
     <div class="cart-item__col cart-item__col--item">
       <div class="cart-item__img-wrap">
         <img
-          v-if="item.image"
-          :src="item.image"
-          :alt="item.name"
+          v-if="item.image_url"
+          :src="item.image_url"
+          :alt="item.title"
           class="cart-item__img"
         >
         <div v-else class="cart-item__img cart-item__img--placeholder" />
       </div>
       <div class="cart-item__info">
-        <p class="cart-item__name">{{ item.name }}</p>
-        <p class="cart-item__type">{{ item.type }}</p>
+        <p class="cart-item__name">{{ item.title }}</p>
+        <p v-if="item.article" class="cart-item__article">{{ item.article }}</p>
       </div>
-    </div>
-    <div class="cart-item__col cart-item__col--size">
-      <span class="cart-item__size">{{ item.size }}</span>
     </div>
     <div class="cart-item__col cart-item__col--qty">
       <div class="cart-item__qty">
@@ -42,7 +39,7 @@
       </div>
     </div>
     <div class="cart-item__col cart-item__col--price">
-      <span class="cart-item__price">{{ formatPrice(itemTotal) }} ₸</span>
+      <span class="cart-item__price">{{ formatPrice(itemTotal) }} {{ item.currency_symbol || '₸' }}</span>
     </div>
     <div class="cart-item__col cart-item__col--remove">
       <button
@@ -69,7 +66,7 @@ const props = defineProps({
 
 const emit = defineEmits(['remove', 'updateQuantity'])
 
-const itemTotal = computed(() => props.item.price * props.item.quantity)
+const itemTotal = computed(() => (Number(props.item.price_amount) || 0) * props.item.quantity)
 
 function formatPrice(value) {
   return Number(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')

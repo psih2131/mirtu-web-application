@@ -129,24 +129,16 @@
         <aside class="order-page__summary">
           <div class="order-page__summary-inner">
             <div class="order-page__summary-row">
-              <span class="order-page__summary-label">Товаров, {{ counterStore.cartItemsCount }} шт.</span>
+              <span class="order-page__summary-label">Стоимость</span>
               <span class="order-page__summary-value">{{ formatPrice(counterStore.cartSubtotal) }} ₸</span>
             </div>
             <div class="order-page__summary-row">
-              <span class="order-page__summary-label">Доставка</span>
-              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartShipping) }} ₸</span>
-            </div>
-            <div class="order-page__summary-row">
-              <span class="order-page__summary-label">Налог</span>
-              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartTax) }} ₸</span>
-            </div>
-            <div v-if="orderBenefit > 0" class="order-page__summary-row order-page__summary-row--benefit">
-              <span class="order-page__summary-label">Выгода:</span>
-              <span class="order-page__summary-value">−{{ formatPrice(orderBenefit) }} ₸</span>
+              <span class="order-page__summary-label">Количество</span>
+              <span class="order-page__summary-value">{{ counterStore.cartItemsCount }} {{ itemsLabel }}</span>
             </div>
             <div class="order-page__summary-row order-page__summary-row--total">
               <span class="order-page__summary-label">Итого:</span>
-              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartTotal) }} ₸</span>
+              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartSubtotal) }} ₸</span>
             </div>
             <button type="button" class="order-page__submit" @click="submitOrder">
               Оформить заказ
@@ -178,8 +170,14 @@ function getOrderImg(index) {
 const counterStore = useCounterStore()
 const deliveryMethod = ref('delivery')
 const paymentMethod = ref('cash')
-const orderBenefit = ref(0)
 const orderQuantities = ref({})
+
+const itemsLabel = computed(() => {
+  const n = counterStore.cartItemsCount
+  if (n === 1) return 'товар'
+  if (n >= 2 && n <= 4) return 'товара'
+  return 'товаров'
+})
 
 const getOrderQuantity = (id) => {
   if (orderQuantities.value[id] !== undefined) return orderQuantities.value[id]

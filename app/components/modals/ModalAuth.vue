@@ -72,6 +72,7 @@
 
 <script setup>
 const modalStore = useModalStore()
+const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
 const passwordVisible = ref(false)
@@ -125,6 +126,7 @@ async function onSubmit() {
       credentials: 'include',
     })
     console.log('Ответ сервера при авторизации:', res)
+    userStore.changeLocalstorageAuthStatus(true)
     closeModal()
     await navigateTo('/user')
   } catch (err) {

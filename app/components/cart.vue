@@ -30,30 +30,36 @@
           </div>
           <div class="cart__head-title-row">
             <h2 class="cart__title">Корзина</h2>
-            <span class="cart__count">{{ counterStore.cartItemsCount }} {{ itemsLabel }}</span>
+            <span v-if="!cartAuthError" class="cart__count">{{ counterStore.cartItemsCount }} {{ itemsLabel }}</span>
           </div>
         </div>
 
-        <div class="cart__main">
+        <!-- UI при ошибке авторизации -->
+        <div v-if="cartAuthError" class="cart__auth-required">
+          <p class="cart__auth-message">Для просмотра корзины необходимо авторизоваться.</p>
+          <button type="button" class="cart__auth-btn" @click="onAuthRequiredClick">
+            Авторизоваться
+          </button>
+        </div>
+
+        <div v-else class="cart__main">
           <div class="cart__items-wrap">
             <template v-if="counterStore.cartItems.length">
               <div class="cart__table-head">
                 <span class="cart__th cart__th--item">Товар</span>
-                <span class="cart__th cart__th--size">Размер</span>
                 <span class="cart__th cart__th--qty">Кол-во</span>
                 <span class="cart__th cart__th--price">Цена</span>
                 <span class="cart__th cart__th--remove" aria-hidden="true" />
               </div>
               <div class="cart__list">
                 <CartItem
-                  v-for="item in cartItemsWithImages"
+                  v-for="item in counterStore.cartItems"
                   :key="item.id"
                   :item="item"
-                  @remove="counterStore.removeFromCart(item.id)"
-                  @update-quantity="(qty) => counterStore.updateCartQuantity(item.id, qty)"
+                  @remove="onRemove(item.id)"
+                  @update-quantity="(qty) => onUpdateQuantity(item.id, qty)"
                 />
               </div>
-              <p class="cart__shipping-note">Бесплатная доставка при заказе от 50 000 ₸</p>
             </template>
             <p v-else class="cart__empty">Корзина пуста</p>
           </div>
@@ -62,31 +68,17 @@
             <h3 class="cart__summary-title">Итого</h3>
             <dl class="cart__summary-rows">
               <div class="cart__summary-row">
-                <dt>Подытог</dt>
-                <dd>{{ formatPrice(counterStore.cartSubtotal) }} ₸</dd>
+                <dt>Стоимость</dt>
+                <dd>{{ formatPrice(counterStore.cartSubtotal) }} {{ summarySymbol }}</dd>
               </div>
               <div class="cart__summary-row">
-                <dt>Доставка</dt>
-                <dd>{{ formatPrice(counterStore.cartShipping) }} ₸</dd>
-              </div>
-              <div class="cart__summary-row">
-                <dt>Налог</dt>
-                <dd>{{ formatPrice(counterStore.cartTax) }} ₸</dd>
+                <dt>Количество</dt>
+                <dd>{{ counterStore.cartItemsCount }} {{ itemsLabel }}</dd>
               </div>
             </dl>
-            <div class="cart__promo">
-              <label for="cart-promo" class="cart__promo-label">Промокод</label>
-              <input
-                id="cart-promo"
-                v-model="promoCode"
-                type="text"
-                class="cart__promo-input"
-                placeholder="введите код"
-              >
-            </div>
             <div class="cart__summary-row cart__summary-row--total">
               <dt>Итого</dt>
-              <dd>{{ formatPrice(counterStore.cartTotal) }} ₸</dd>
+              <dd>{{ formatPrice(counterStore.cartSubtotal) }} {{ summarySymbol }}</dd>
             </div>
             <NuxtLink to="/order" class="cart__checkout" @click="closeCart">
               Оформить заказ
@@ -100,28 +92,82 @@
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
+import { useModalStore } from '@/stores/modal'
+import { useUiStore } from '@/stores/ui'
 
-const productImageModulesWebp = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
-const productImageModulesJpg = import.meta.glob('~/assets/images/products/*.jpg', { eager: true, query: '?url', import: 'default' })
-const productImageUrls = [
-  ...Object.values(productImageModulesWebp).map((m) => (typeof m === 'string' ? m : m?.default ?? '')),
-  ...Object.values(productImageModulesJpg).map((m) => (typeof m === 'string' ? m : m?.default ?? '')),
-].filter(Boolean)
-
-function getCartImg(index) {
-  const i = Number(index) || 0
-  return productImageUrls[i % productImageUrls.length] ?? productImageUrls[0] ?? ''
-}
+const apiUrlDomain = useRuntimeConfig().public.apiUrl
+const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
 
 const counterStore = useCounterStore()
-const promoCode = ref('')
+const modalStore = useModalStore()
+const uiStore = useUiStore()
+const cartAuthError = ref(false)
 
-const cartItemsWithImages = computed(() =>
-  counterStore.cartItems.map((item) => ({
-    ...item,
-    image: item.image || getCartImg(item.imageIndex ?? 0),
-  }))
+async function fetchCart(opts = {}) {
+  const { silent } = opts
+  cartAuthError.value = false
+  try {
+    if (!silent) uiStore.showPreloader()
+    const result = await $fetch(`${apiBase}/cart`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+    counterStore.setCartItems(result?.items ?? [])
+  } catch (err) {
+    const code = err?.statusCode ?? err?.status ?? err?.response?.status
+    if (code === 401) {
+      cartAuthError.value = true
+    } else {
+      console.error('Cart fetch error:', err)
+    }
+  } finally {
+    if (!silent) uiStore.hidePreloader()
+  }
+}
+
+onMounted(() => {
+  fetchCart({ silent: true })
+})
+
+watch(
+  () => counterStore.cartOpen,
+  async (isOpen) => {
+    if (!isOpen) return
+    await fetchCart()
+  }
 )
+
+async function onUpdateQuantity(itemId, quantity) {
+  try {
+    await $fetch(`${apiBase}/cart/items/${itemId}`, {
+      method: 'PATCH',
+      body: { quantity },
+      credentials: 'include',
+    })
+    await fetchCart()
+  } catch (err) {
+    console.error('Update quantity error:', err)
+  }
+}
+
+async function onRemove(itemId) {
+  try {
+    await $fetch(`${apiBase}/cart/items/${itemId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    })
+    await fetchCart()
+  } catch (err) {
+    console.error('Remove from cart error:', err)
+  }
+}
+
+function onAuthRequiredClick() {
+  closeCart()
+  modalStore.openModal('auth')
+}
+
+const summarySymbol = computed(() => counterStore.cartItems[0]?.currency_symbol || '₸')
 
 const itemsLabel = computed(() => {
   const n = counterStore.cartItemsCount
