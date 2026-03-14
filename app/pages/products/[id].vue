@@ -31,6 +31,7 @@
                 :key="selectedVariantIndex"
                 :images="productImages"
                 :title="cardData?.basicInfo?.title || cardData?.displayInfo?.display_title || 'Товар'"
+                :product="cardData"
               />
             </ClientOnly>
           </div>

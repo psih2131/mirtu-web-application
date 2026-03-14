@@ -75,6 +75,16 @@
   display: block;
 }
 
+.product-card__action-btn--fav-active {
+  color: #dc2626;
+  background: #fef2f2;
+
+  &:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
 .product-card__img {
   max-width: 100%;
   max-height: 100%;
