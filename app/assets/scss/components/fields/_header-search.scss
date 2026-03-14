@@ -24,6 +24,33 @@
     font-family: $mainFont;
 }
 
+.search-component__clear {
+    position: absolute;
+    right: 48px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+        color: #111827;
+        background: #f3f4f6;
+    }
+
+    svg {
+        display: block;
+    }
+}
+
 .search-component__search-icon {
     width: 35px;
     height: 35px;
@@ -53,10 +80,86 @@
     left: 15px;
     width: 20px;
     z-index: 2;
-
 }
 
 .search-component__decor-icon-img {
     display: block;
     width: 100%;
+}
+
+// Выпадающий список результатов поиска
+.search-component__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    max-height: 360px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+}
+
+.search-component__dropdown-loading,
+.search-component__dropdown-empty {
+    padding: 1rem 1.25rem;
+    font-size: 0.9375rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.search-component__dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.2s;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: #f9fafb;
+    }
+}
+
+.search-component__dropdown-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.search-component__dropdown-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.search-component__dropdown-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-component__dropdown-category {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.search-component__dropdown-price {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2E3A59;
 }
