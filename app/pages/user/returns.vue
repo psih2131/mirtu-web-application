@@ -26,6 +26,9 @@
             <p class="user-cabinet-returns__text">
               Возврат возможен в течение 14 дней с момента получения заказа при сохранении товарного вида и оригинальной упаковки.
             </p>
+            <p class="user-cabinet-returns__tip">
+              При оформлении заявки на возврат укажите, пожалуйста, ваш email или ID пользователя — это ускорит обслуживание.
+            </p>
 
             <div class="user-cabinet-returns__buttons">
               <a
@@ -131,8 +134,19 @@ onMounted(async () => {
   color: #374151;
 
   &:last-of-type {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
+}
+
+.user-cabinet-returns__tip {
+  margin: 0 0 2rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #1e3a5f;
+  background: rgba(30, 58, 95, 0.06);
+  border: 1px solid rgba(30, 58, 95, 0.12);
+  border-radius: 10px;
 }
 
 .user-cabinet-returns__buttons {
