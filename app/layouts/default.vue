@@ -24,6 +24,10 @@ const apiUrlDomain = useRuntimeConfig().public.apiUrl
 const apiBase = apiUrlDomain?.endsWith('/api') ? apiUrlDomain : (apiUrlDomain?.replace(/\/?$/, '') || '') + '/api'
 
 const { data: aboutData } = await useFetch(`${apiBase}/about`, { method: 'GET' })
-console.log('About page data:', aboutData.value)
+
+const route = useRoute()
+watch(() => route.query.openCart, (val) => {
+  if (val && process.client) counterStore.openCart()
+}, { immediate: true })
 </script>
 

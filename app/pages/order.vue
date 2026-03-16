@@ -1,100 +1,92 @@
 <template>
   <div class="order-page">
-    <div class="container order-page__container">
-      <h1 class="order-page__title">Оформление заказа</h1>
+    <div class="container">
+      <!-- title -->
+      <h1 v-if="!createdOrder" class="order-page__title">Оформление заказа</h1>
 
-      <div class="order-page__layout">
+      <!-- alert for auth --> 
+      <OrderAlertAuth v-if="error === 'auth'" @auth-click="onAuthClick" />
+
+      <!-- alert for error -->  
+      <OrderAlertError v-else-if="error === 'other'" />
+
+      <!-- alert for empty cart -->
+      <OrderAlertEmpty v-else-if="!cartData?.items?.length && cartData !== null" />
+
+      <!-- layout for success -->
+      <OrderSuccess v-else-if="createdOrder" :key="createdOrder?.id" :order="createdOrder" />
+
+      <!-- layout for order -->
+      <div v-else class="order-page__layout">
         <main class="order-page__main">
-          <section class="order-page__section">
+          <section class="order-page__section" v-if="cartData?.items?.length">
             <h2 class="order-page__section-title">Ваш заказ</h2>
-            <div class="order-page__table-head">
-              <span class="order-page__th order-page__th--item">Товар</span>
-              <span class="order-page__th order-page__th--size">Размер</span>
-              <span class="order-page__th order-page__th--qty">Кол-во</span>
-              <span class="order-page__th order-page__th--price">Цена</span>
-            </div>
-            <div class="order-page__list">
-              <OrderItem
-                v-for="item in orderItemsWithImages"
-                :key="item.id"
-                :item="item"
-                :quantity="getOrderQuantity(item.id)"
-                @update-quantity="setOrderQuantity(item.id, $event)"
-              />
+            <div class="order-page__products">
+              <OrderProcuctCard v-for="value in cartData.items" :key="value.id" :item="value" />
             </div>
           </section>
 
-          <section class="order-page__section">
+          <section class="order-page__section order-page__section--shipping">
             <div class="order-page__step-head">
               <span class="order-page__step-badge">1</span>
               <h2 class="order-page__section-title">Выбрать способ получения</h2>
             </div>
             <div class="order-page__options">
-              <button
-                type="button"
-                class="order-page__option"
-                :class="{ 'order-page__option--active': deliveryMethod === 'delivery' }"
-                @click="deliveryMethod = 'delivery'"
-              >
-                <span class="order-page__option-title">Доставка</span>
-                <span class="order-page__option-desc">с 28 июля, от 300 ₸</span>
+              <button type="button" class="order-page__option" :class="{ 'order-page__option--active': form.shippingMethod === 'CDEK' }" @click="form.shippingMethod = 'CDEK'">
+                <span class="order-page__option-title">CDEK</span>
+                <span class="order-page__option-desc">Доставка по Казахстану</span>
               </button>
-              <button
-                type="button"
-                class="order-page__option"
-                :class="{ 'order-page__option--active': deliveryMethod === 'pickup' }"
-                @click="deliveryMethod = 'pickup'"
-              >
+              <button type="button" class="order-page__option" :class="{ 'order-page__option--active': form.shippingMethod === 'SELF_PICKUP' }" @click="form.shippingMethod = 'SELF_PICKUP'">
                 <span class="order-page__option-title">Самовывоз</span>
-                <span class="order-page__option-desc">Завтра, 0 ₸</span>
+                <span class="order-page__option-desc">Забрать в пункте выдачи</span>
               </button>
             </div>
-          </section>
 
-          <section class="order-page__section">
-            <h2 class="order-page__section-title">Адрес</h2>
+            <div v-if="form.shippingMethod === 'CDEK'" class="order-page__form">
+              <div class="order-page__form-row">
+                <label class="order-page__label">Адрес <span class="order-page__required">*</span></label>
+                <input v-model="form.address" type="text" class="order-page__input order-page__input--wide" placeholder="Улица, дом, квартира" />
+              </div>
+              <div class="order-page__form-row">
+                <label class="order-page__label">Город (CDEK) <span class="order-page__required">*</span></label>
+                <OrderCdekCityWidget v-model="form.cdekCity" />
+              </div>
+            </div>
+
+            <div v-if="form.shippingMethod === 'SELF_PICKUP'" class="order-page__form">
+              <div class="order-page__form-row">
+                <label class="order-page__label">Адрес самовывоза <span class="order-page__required">*</span></label>
+                <select v-model="form.pickupAddressId" class="order-page__input order-page__input--wide">
+                  <option :value="null">Выберите адрес</option>
+                  <option v-for="addr in pickupAddresses" :key="addr.id" :value="addr.id">
+                    {{ addr.city }}, {{ addr.street }} {{ addr.building }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
             <div class="order-page__form">
-              <div class="order-page__form-row">
-                <input
-                  v-model="form.region"
-                  type="text"
-                  class="order-page__input"
-                  placeholder="Регион"
-                >
-                <input
-                  v-model="form.address"
-                  type="text"
-                  class="order-page__input"
-                  placeholder="Адрес"
-                >
-              </div>
-              <div class="order-page__form-row">
-                <input
-                  v-model="form.comment"
-                  type="text"
-                  class="order-page__input order-page__input--wide"
-                  placeholder="Комментарий"
-                >
-              </div>
-              <div class="order-page__form-row order-page__form-row--inline">
-                <input
-                  v-model="form.apartment"
-                  type="text"
-                  class="order-page__input order-page__input--small"
-                  placeholder="Квартира"
-                >
-                <input
-                  v-model="form.floor"
-                  type="text"
-                  class="order-page__input order-page__input--small"
-                  placeholder="Этаж"
-                >
-                <input
-                  v-model="form.intercom"
-                  type="text"
-                  class="order-page__input order-page__input--small"
-                  placeholder="Домофон"
-                >
+              <div class="order-page__form-row order-page__form-row--delivery-options">
+                <label class="order-page__label">Опция доставки</label>
+                <div class="order-page__options order-page__options--delivery">
+                  <button
+                    v-for="opt in (deliveryMethods?.delivery_options || [])"
+                    :key="opt.method"
+                    type="button"
+                    class="order-page__option"
+                    :class="{ 'order-page__option--active': form.deliveryOption === opt.method }"
+                    @click="form.deliveryOption = opt.method"
+                  >
+                    <span class="order-page__option-title">{{ { FAST: 'Быстрая', STANDARD: 'Стандартная' }[opt.method] || opt.method }}</span>
+                    <span class="order-page__option-desc">{{ opt.day_min }}–{{ opt.day_max }} дн.</span>
+                    <span
+                      class="order-page__option-price"
+                      :class="{ 'order-page__option-price--free': Number(opt.price) === 0 }"
+                    >
+                      {{ Number(opt.price) > 0 ? `${formatPrice(opt.price)} ${opt.currency_symbol || opt.currency || '₸'}` : 'Бесплатно' }}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </section>
@@ -102,26 +94,37 @@
           <section class="order-page__section">
             <div class="order-page__step-head">
               <span class="order-page__step-badge">2</span>
+              <h2 class="order-page__section-title">Контактные данные</h2>
+            </div>
+            <div class="order-page__form">
+              <div class="order-page__form-row">
+                <label class="order-page__label">Телефон для связи <span class="order-page__required">*</span></label>
+                <input v-model="form.contactPhone" type="tel" inputmode="numeric" class="order-page__input order-page__input--wide" placeholder="77001234567" @input="form.contactPhone = String(form.contactPhone || '').replace(/\D/g, '')" />
+              </div>
+            </div>
+          </section>
+
+          <section class="order-page__section">
+            <div class="order-page__step-head">
+              <span class="order-page__step-badge">3</span>
+              <h2 class="order-page__section-title">Промокод</h2>
+            </div>
+            <div class="order-page__form">
+              <input v-model="form.promoCode" type="text" maxlength="20" class="order-page__input order-page__input--wide" placeholder="Введите промокод (опционально)" />
+            </div>
+          </section>
+
+          <section class="order-page__section">
+            <div class="order-page__step-head">
+              <span class="order-page__step-badge">4</span>
               <h2 class="order-page__section-title">Способ оплаты</h2>
             </div>
-            <div class="order-page__options">
-              <button
-                type="button"
-                class="order-page__option"
-                :class="{ 'order-page__option--active': paymentMethod === 'cash' }"
-                @click="paymentMethod = 'cash'"
-              >
-                <span class="order-page__option-title">Наличными при получении</span>
-              </button>
-              <button
-                type="button"
-                class="order-page__option"
-                :class="{ 'order-page__option--active': paymentMethod === 'card' }"
-                @click="paymentMethod = 'card'"
-              >
-                <span class="order-page__option-title">Банковская карта</span>
-                <span class="order-page__option-cards">МИР · VISA · MasterCard</span>
-              </button>
+            <div class="order-page__payment-card">
+              <img :src="kaspiLogo" alt="Каспи" class="order-page__payment-logo">
+              <div class="order-page__payment-content">
+                <h3 class="order-page__payment-title">Каспи</h3>
+                <p class="order-page__payment-desc">Оплата картой Каспи или рассрочка</p>
+              </div>
             </div>
           </section>
         </main>
@@ -129,86 +132,231 @@
         <aside class="order-page__summary">
           <div class="order-page__summary-inner">
             <div class="order-page__summary-row">
-              <span class="order-page__summary-label">Стоимость</span>
-              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartSubtotal) }} ₸</span>
+              <span class="order-page__summary-label">Товаров, {{ cartItemsCount }} шт.:</span>
+              <span class="order-page__summary-value">{{ formatPrice(cartSubtotal) }} {{ summarySymbol }}</span>
             </div>
-            <div class="order-page__summary-row">
-              <span class="order-page__summary-label">Количество</span>
-              <span class="order-page__summary-value">{{ counterStore.cartItemsCount }} {{ itemsLabel }}</span>
+            <div v-if="discountApplied > 0" class="order-page__summary-row order-page__summary-row--benefit">
+              <span class="order-page__summary-label">Выгода:</span>
+              <span class="order-page__summary-value">−{{ formatPrice(discountApplied) }} {{ summarySymbol }}</span>
             </div>
             <div class="order-page__summary-row order-page__summary-row--total">
               <span class="order-page__summary-label">Итого:</span>
-              <span class="order-page__summary-value">{{ formatPrice(counterStore.cartSubtotal) }} ₸</span>
+              <span class="order-page__summary-value">{{ formatPrice(totalToPay) }} {{ summarySymbol }}</span>
             </div>
-            <button type="button" class="order-page__submit" @click="submitOrder">
-              Оформить заказ
+            <p v-if="submitError" class="order-page__submit-error">{{ submitError }}</p>
+            <button type="button" class="order-page__submit" :disabled="isSubmitting" @click="submitOrder">
+              {{ isSubmitting ? 'Отправка...' : 'Оформить заказ' }}
             </button>
           </div>
         </aside>
       </div>
+
+      <section v-if="cartData?.items?.length && !createdOrder" class="order-page__json-section">
+        <h2 class="order-page__json-title">JSON для POST /order</h2>
+        <pre class="order-page__json-block">{{ orderPayloadJson }}</pre>
+      </section>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-import { useCounterStore } from '@/stores/counter'
-
 definePageMeta({ layout: 'default' })
 
-const productImageModulesWebp = import.meta.glob('~/assets/images/products/*.webp', { eager: true, query: '?url', import: 'default' })
-const productImageModulesJpg = import.meta.glob('~/assets/images/products/*.jpg', { eager: true, query: '?url', import: 'default' })
-const productImageUrls = [
-  ...Object.values(productImageModulesWebp).map((m) => (typeof m === 'string' ? m : m?.default ?? '')),
-  ...Object.values(productImageModulesJpg).map((m) => (typeof m === 'string' ? m : m?.default ?? '')),
-].filter(Boolean)
+//imports
+import { useModalStore } from '@/stores/modal'
 
-function getOrderImg(index) {
-  const i = Number(index) || 0
-  return productImageUrls[i % productImageUrls.length] ?? productImageUrls[0] ?? ''
-}
+import { useUiStore } from '@/stores/ui'
 
-const counterStore = useCounterStore()
-const deliveryMethod = ref('delivery')
-const paymentMethod = ref('cash')
-const orderQuantities = ref({})
+import OrderProcuctCard from '@/components/cards/OrderProcuctCard.vue'
 
-const itemsLabel = computed(() => {
-  const n = counterStore.cartItemsCount
-  if (n === 1) return 'товар'
-  if (n >= 2 && n <= 4) return 'товара'
-  return 'товаров'
-})
+import kaspiLogo from '~/assets/images/payment/kaspi.png'
 
-const getOrderQuantity = (id) => {
-  if (orderQuantities.value[id] !== undefined) return orderQuantities.value[id]
-  const item = counterStore.cartItems.find((i) => i.id === id)
-  return item ? item.quantity : 1
-}
-const setOrderQuantity = (id, qty) => {
-  orderQuantities.value = { ...orderQuantities.value, [id]: qty }
-}
+
+
+//data
+const uiStore = useUiStore()
+
+const cartData = ref(null)
+
+const modalStore = useModalStore()
+
+const error = ref(null)
+
+const pickupAddresses = ref([])
+
+const deliveryMethods = ref([])
 
 const form = reactive({
-  region: '',
+  shippingMethod: 'CDEK',
   address: '',
-  comment: '',
-  apartment: '',
-  floor: '',
-  intercom: '',
+  cdekCity: null,
+  deliveryOption: 'STANDARD',
+  pickupAddressId: null,
+  contactPhone: '',
+  promoCode: '',
 })
 
-const orderItemsWithImages = computed(() =>
-  counterStore.cartItems.map((item) => ({
-    ...item,
-    image: item.image || getOrderImg(item.imageIndex ?? 0),
-  }))
+const isSubmitting = ref(false)
+const submitError = ref(null)
+const createdOrder = ref(null)
+
+const apiBase = useRuntimeConfig().public?.apiUrl?.endsWith('/api')
+  ? useRuntimeConfig().public.apiUrl
+  : (useRuntimeConfig().public?.apiUrl?.replace(/\/?$/, '') || '') + '/api'
+
+const cartItemsCount = computed(() =>
+  cartData.value?.items?.reduce((s, i) => s + (i.quantity || 0), 0) || 0
 )
+const cartSubtotal = computed(() =>
+  cartData.value?.items?.reduce((s, i) => s + (Number(i.price_amount) || 0) * (i.quantity || 0), 0) || 0
+)
+const summarySymbol = computed(() => cartData.value?.items?.[0]?.currency_symbol || '₸')
+const discountApplied = ref(0) // при применении промокода
+const totalToPay = computed(() => cartSubtotal.value - discountApplied.value)
 
-function formatPrice(value) {
-  return Number(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+// строим payload для заказа
+function buildOrderPayload() {
+  const phone = form.contactPhone.replace(/\D/g, '').replace(/^8|^7/, '').slice(-10)
+  const payload = {
+    contact_phone: phone ? `+7${phone}` : form.contactPhone,
+    currency: 'KZT',
+    shipping_method: form.shippingMethod,
+    delivery_option_method: form.deliveryOption,
+    clear_cart: true,
+  }
+  if (form.shippingMethod === 'CDEK') {
+    payload.address = form.address
+    payload.cdek_city_code = form.cdekCity?.code ?? null
+  }
+  if (form.shippingMethod === 'SELF_PICKUP') {
+    payload.pickup_address_id = form.pickupAddressId
+  }
+  if (form.promoCode?.trim()) {
+    payload.promo_code = form.promoCode.trim()
+  }
+  return payload
 }
 
-function submitOrder() {
-  // TODO: отправка заказа
+const orderPayloadJson = computed(() => JSON.stringify(buildOrderPayload(), null, 2))
+
+function formatPrice(v) {
+  return Number(v || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
+
+
+
+// получение корзины
+async function fetchCart() {
+  try {
+    uiStore.showPreloader()
+    const res = await fetch(`${apiBase}/cart`, { method: 'GET', credentials: 'include' })
+    if (!res.ok) {
+      error.value = res.status === 401 ? 'auth' : 'other'
+      return
+    }
+    const data = await res.json()
+    cartData.value = data
+    await fetchPickupAddresses()
+  } catch {
+    error.value = 'other'
+  }
+}
+
+// получение адресов самовывоза
+async function fetchPickupAddresses() {
+  try {
+    const res = await fetch(`${apiBase}/order/pick-up-addresses`)
+    if (!res.ok) {
+      return
+    }
+    const data = await res.json()
+    console.log('pick up:', res)
+    console.log('delivery addresses pick up:', data)
+
+    pickupAddresses.value = data
+
+    fetchDeliveryMethods()
+
+  } catch {
+    console.error('pick up addresses error:', error)
+  }
+}
+
+
+// получение методов доставки
+async function fetchDeliveryMethods() {
+  try {
+    const res = await fetch(`${apiBase}/order/delivery-options`)
+    console.log('delivery methods:', res)
+    const data = await res.json()
+    console.log('delivery methods:', data)
+    deliveryMethods.value = data
+  }
+  catch(error) {
+    console.error('delivery methods error:', error)
+  }
+  finally {
+    uiStore.hidePreloader()
+  }
+}
+
+
+// открываем модалку авторизации
+function onAuthClick() {
+  modalStore.openModal('auth')
+}
+
+// отправляем заказ
+async function submitOrder() {
+  submitError.value = null
+
+  if (!form.contactPhone?.trim()) {
+    submitError.value = 'Укажите телефон для связи'
+    return
+  }
+  if (form.shippingMethod === 'CDEK') {
+    if (!form.address?.trim()) {
+      submitError.value = 'Укажите адрес доставки'
+      return
+    }
+    if (!form.cdekCity?.code) {
+      submitError.value = 'Выберите город CDEK'
+      return
+    }
+  }
+  if (form.shippingMethod === 'SELF_PICKUP' && !form.pickupAddressId) {
+    submitError.value = 'Выберите адрес самовывоза'
+    return
+  }
+
+  isSubmitting.value = true
+  try {
+    const payload = buildOrderPayload()
+    const res = await fetch(`${apiBase}/order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    })
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      submitError.value = data.message || data.error || `Ошибка ${res.status}`
+      return
+    }
+
+    const raw = await res.json()
+    createdOrder.value = raw?.data ?? raw
+    console.log('created order:', createdOrder.value)
+  } catch (e) {
+    submitError.value = 'Ошибка сети. Попробуйте позже.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+onMounted(() => {
+  fetchCart()
+})
 </script>

@@ -108,18 +108,16 @@ async function fetchCart(opts = {}) {
   cartAuthError.value = false
   try {
     if (!silent) uiStore.showPreloader()
-    const result = await $fetch(`${apiBase}/cart`, {
-      method: 'GET',
-      credentials: 'include',
-    })
+    const res = await fetch(`${apiBase}/cart`, { method: 'GET', credentials: 'include' })
+    if (!res.ok) {
+      if (res.status === 401) cartAuthError.value = true
+      else console.error('Cart fetch error:', res.status)
+      return
+    }
+    const result = await res.json()
     counterStore.setCartItems(result?.items ?? [])
   } catch (err) {
-    const code = err?.statusCode ?? err?.status ?? err?.response?.status
-    if (code === 401) {
-      cartAuthError.value = true
-    } else {
-      console.error('Cart fetch error:', err)
-    }
+    console.error('Cart fetch error:', err)
   } finally {
     if (!silent) uiStore.hidePreloader()
   }
@@ -139,12 +137,13 @@ watch(
 
 async function onUpdateQuantity(itemId, quantity) {
   try {
-    await $fetch(`${apiBase}/cart/items/${itemId}`, {
+    const res = await fetch(`${apiBase}/cart/items/${itemId}`, {
       method: 'PATCH',
-      body: { quantity },
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantity }),
       credentials: 'include',
     })
-    await fetchCart()
+    if (res.ok) await fetchCart()
   } catch (err) {
     console.error('Update quantity error:', err)
   }
@@ -152,11 +151,11 @@ async function onUpdateQuantity(itemId, quantity) {
 
 async function onRemove(itemId) {
   try {
-    await $fetch(`${apiBase}/cart/items/${itemId}`, {
+    const res = await fetch(`${apiBase}/cart/items/${itemId}`, {
       method: 'DELETE',
       credentials: 'include',
     })
-    await fetchCart()
+    if (res.ok) await fetchCart()
   } catch (err) {
     console.error('Remove from cart error:', err)
   }
@@ -181,6 +180,6 @@ function closeCart() {
 }
 
 function formatPrice(value) {
-  return Number(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  return Number(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
 </script>

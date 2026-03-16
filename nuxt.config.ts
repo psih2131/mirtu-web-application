@@ -26,9 +26,15 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    cdecAccountId: process.env.NUXT_CDEC_ACCOUNT_ID || '',
+    cdecApiKey: process.env.NUXT_SECRET_CDEK_API_KEY || '',
+    cdecApiUrl: process.env.NUXT_PUBLIC_CDEK_API_URL || '', 
+    
     public: {
       apiUrl: '', // overridden by NUXT_PUBLIC_API_URL from .env
     },
+
+    
   },
 
   modules: [// другие модули
