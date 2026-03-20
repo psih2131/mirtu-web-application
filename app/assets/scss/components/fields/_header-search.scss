@@ -64,6 +64,7 @@
     cursor: pointer;
     right: 5px;
     transition: all ease 0.3s;
+    border: none;
 
     svg {
         display: block;
@@ -162,4 +163,47 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: #2E3A59;
+}
+
+
+
+@media only screen and (max-width: 1450px) {
+    .search-component {
+        width: 400px;
+    }
+
+}
+
+@media only screen and (max-width: 1240px) {
+    .search-component {
+        width: 300px;
+    }
+
+    .search-component__field {
+        padding: 12px 40px 12px 40px;
+        font-size: 12px;
+    }
+
+    .search-component__decor-icon {
+        width: 15px;
+    }
+
+    .search-component__dropdown-empty {
+        font-size: 12px;
+    }
+
+    .search-component__dropdown-title {
+        font-size: 13px;
+    }
+
+}
+
+@media only screen and (max-width: 940px) {}
+
+@media only screen and (max-width: 760px) {
+    .mob-meny{
+        .search-component{
+            width: 100%;
+        }
+    }
 }

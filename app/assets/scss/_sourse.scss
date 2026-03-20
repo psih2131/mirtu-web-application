@@ -194,16 +194,20 @@ ul {
 	}
 }
 
-@media only screen and (max-width: 1380px) {
-	.container {}
+@media only screen and (max-width: 1240px) {
+	.container {
+		width: 900px;
+	}
 }
 
-@media only screen and (max-width: 990px) {
-	.container {}
+@media only screen and (max-width: 940px) {
+	.container {
+		width: 750px;
+	}
 }
 
 @media only screen and (max-width: 760px) {
 	.container {
-		width: 360px;
+		width: 350px;
 	}
 }

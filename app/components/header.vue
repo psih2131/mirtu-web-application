@@ -1,24 +1,33 @@
 <template>
-  <div class="header">
+  <header class="header">
     <div class="container">
       <div class="header__top">
-        <NuxtLink to="/" class="header__logo">
+        <NuxtLink @click="mobMenyOpen = false" to="/" class="header__logo">
           <img
             src="@/assets/images/img/header-logo.png"
             alt=""
             class="header__logo-img"
+          />
+
+          <img
+            src="@/assets/images/img/logo-mob.png"
+            alt=""
+            class="header__logo-img-mob"
           />
         </NuxtLink>
 
         <headerSearch />
 
         <div class="header__phone" v-if="dataContacts?.phone_contact">
-          <a :href="`tel:${dataContacts.phone_contact}`" class="header__phone-value" v-html="dataContacts.phone_contact.replace(/\s/g, '')"></a>
+          <a
+            :href="`tel:${dataContacts.phone_contact}`"
+            class="header__phone-value"
+            v-html="dataContacts.phone_contact.replace(/\s/g, '')"
+          ></a>
           <p class="header__phone-hour-work">Ежедневно с 10:00 до 21:00</p>
         </div>
 
         <div class="header__store-controls-row">
-
           <div
             class="header__store-control-element header-store-control header-store-control--cart header-store-control--cart-wrap"
             role="button"
@@ -31,7 +40,10 @@
               v-if="store.cartItemsCount > 0"
               class="header__cart-badge"
               aria-hidden="true"
-            >{{ store.cartItemsCount > 99 ? '99+' : store.cartItemsCount }}</span>
+              >{{
+                store.cartItemsCount > 99 ? "99+" : store.cartItemsCount
+              }}</span
+            >
             <svg
               width="21"
               height="21"
@@ -70,28 +82,29 @@
             </svg>
           </div>
 
-          <HeaderFavoritesButton />
-
+          <HeaderFavoritesButton @click="mobMenyOpen = false" />
 
           <div class="header-user-auth" v-if="authStatus === true">
-            <NuxtLink to="/user" class="header-user-auth__link">
+            <NuxtLink to="/user" class="header-user-auth__link" @click="mobMenyOpen = false">
               <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8C17 10.7614 14.7614 13 12 13C9.23858 13 7 10.7614 7 8ZM12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8C9 9.65685 10.3431 11 12 11Z"
-                fill="#2E3A59"
-              />
-              <path
-                d="M6.34315 16.3431C4.84285 17.8434 4 19.8783 4 22H6C6 20.4087 6.63214 18.8826 7.75736 17.7574C8.88258 16.6321 10.4087 16 12 16C13.5913 16 15.1174 16.6321 16.2426 17.7574C17.3679 18.8826 18 20.4087 18 22H20C20 19.8783 19.1571 17.8434 17.6569 16.3431C16.1566 14.8429 14.1217 14 12 14C9.87827 14 7.84344 14.8429 6.34315 16.3431Z"
-                fill="#2E3A59"
-              />
-            </svg>
-            <span class="header-user-auth__name" v-if="userName">{{ userName }}</span>
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8C17 10.7614 14.7614 13 12 13C9.23858 13 7 10.7614 7 8ZM12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8C9 9.65685 10.3431 11 12 11Z"
+                  fill="#2E3A59"
+                />
+                <path
+                  d="M6.34315 16.3431C4.84285 17.8434 4 19.8783 4 22H6C6 20.4087 6.63214 18.8826 7.75736 17.7574C8.88258 16.6321 10.4087 16 12 16C13.5913 16 15.1174 16.6321 16.2426 17.7574C17.3679 18.8826 18 20.4087 18 22H20C20 19.8783 19.1571 17.8434 17.6569 16.3431C16.1566 14.8429 14.1217 14 12 14C9.87827 14 7.84344 14.8429 6.34315 16.3431Z"
+                  fill="#2E3A59"
+                />
+              </svg>
+              <span class="header-user-auth__name" v-if="userName">{{
+                userName
+              }}</span>
             </NuxtLink>
           </div>
 
@@ -122,12 +135,17 @@
             </svg>
           </div>
 
-          
-          
+          <div class="header__menu burger-menu" 
+          @click="mobMenyOpen = !mobMenyOpen"
+          :class="{ 'burger-menu--active': mobMenyOpen }">
+            <span class="burger-menu__line"></span>
+            <span class="burger-menu__line"></span>
+          </div>
         </div>
       </div>
       <div class="header__down">
-        <NuxtLink to="/products" class="header__all-cat">
+        <NuxtLink to="/products" class="header__all-cat" 
+        @click="mobMenyOpen = false">
           <svg
             width="24"
             height="24"
@@ -165,59 +183,126 @@
 
         <nav class="header__nav">
           <ul class="header__nav-list">
-            <li class="header__nav-element" v-for="value in allAvaliableCategories" :key="value.id">
+            <li
+              class="header__nav-element"
+              v-for="value in allAvaliableCategories"
+              :key="value.id"
+            >
               <NuxtLink
                 :to="`/products/categories/${value.id}`"
+                @click="mobMenyOpen = false"
                 class="header__nav-link"
-                >
+              >
                 {{ value.name_ru }}
                 <span class="header__nav-link-count">({{ value.count }})</span>
-                </NuxtLink
-              >
+              </NuxtLink>
             </li>
-
           </ul>
         </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="header__mob-meny mob-meny" 
+  :class="{ 'mob-meny--active': mobMenyOpen }">
+    <div class="container">
+      <div class="mob-meny__top">
+        <headerSearch />
+     
+      <nav class="mob-meny__nav">
+        <ul class="mob-meny__list">
+          <li class="mob-meny__element">
+            <NuxtLink to="/" class="mob-meny__link" @click="mobMenyOpen = false">
+              Главная
+            </NuxtLink>
+          </li>
+          <li class="mob-meny__element">
+            <NuxtLink to="/products" class="mob-meny__link" @click="mobMenyOpen = false">
+              Все категории
+            </NuxtLink>
+          </li>
+          <li
+            class="mob-meny__element"
+            v-for="value in allAvaliableCategories"
+            :key="value.id"
+          >
+            <NuxtLink
+              :to="`/products/categories/${value.id}`"
+              class="mob-meny__link"
+              @click="mobMenyOpen = false"
+            >
+              {{ value.name_ru }}
+              <span class="mob-meny__link-count">({{ value.count }})</span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+      <div class="mob-meny__footer">
+        <div class="mob-meny__contacts">
+        <div class="mob-meny__phone" v-if="dataContacts?.phone_contact">
+          <a
+            :href="`tel:${dataContacts.phone_contact}`"
+            class="mob-meny__phone-link"
+            v-html="dataContacts.phone_contact.replace(/\s/g, '')"
+          ></a>
+          <p class="mob-meny__phone-hour-work">Ежедневно с 10:00 до 21:00</p>
+        </div>
+        <div class="mob-meny__email">
+          <a
+            :href="`mailto:${dataContacts.email_contact}`"
+            class="mob-meny__email-link"
+            v-html="dataContacts.email_contact.replace(/\s/g, '')"
+          ></a>
+        </div>
+      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import headerSearch from '@/components/fields/headerSearch.vue'
-import useAllFiltrsData from '@/composables/allFiltrsData'
-import { storeToRefs } from 'pinia'
-import { useCounterStore } from '@/stores/counter'
-import { useModalStore } from '@/stores/modal'
-import { useUserStore } from '@/stores/user'
+import { ref } from "vue";
+import headerSearch from "@/components/fields/headerSearch.vue";
+import useAllFiltrsData from "@/composables/allFiltrsData";
+import { storeToRefs } from "pinia";
+import { useCounterStore } from "@/stores/counter";
+import { useModalStore } from "@/stores/modal";
+import { useUserStore } from "@/stores/user";
 
 const props = defineProps({
   dataContacts: {
     type: Object,
     required: true,
   },
-})
+});
 
-const allAvaliableCategories = ref([])
-const { allFiltrsData } = await useAllFiltrsData()
-allAvaliableCategories.value = allFiltrsData.value.filters.categories
+const mobMenyOpen = ref(false);
 
-const store = useCounterStore()
-const modalStore = useModalStore()
-const userStore = useUserStore()
-const { authStatus, userName } = storeToRefs(userStore)
+const allAvaliableCategories = ref([]);
+
+const { allFiltrsData } = await useAllFiltrsData();
+allAvaliableCategories.value = allFiltrsData.value.filters.categories;
+
+const store = useCounterStore();
+
+const modalStore = useModalStore();
+
+const userStore = useUserStore();
+
+const { authStatus, userName } = storeToRefs(userStore);
 
 onMounted(() => {
-  userStore.checkAuthStatus()
-  userStore.checkUserName()
-})
+  userStore.checkAuthStatus();
+  userStore.checkUserName();
+});
 
 function openCart() {
-  store.openCart()
+  store.openCart();
 }
 
 function openAuthModal() {
-  modalStore.openModal('auth')
+  modalStore.openModal("auth");
 }
 </script>

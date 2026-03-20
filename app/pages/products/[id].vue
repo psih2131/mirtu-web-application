@@ -271,6 +271,8 @@
       </div>
     </section>
 
+    <ProductReviews :product-id="spu" />
+
     <SectionsProductsSliderSec
       title="Похожие товары"
       :products="relatedProducts"
