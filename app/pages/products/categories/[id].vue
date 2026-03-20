@@ -13,8 +13,27 @@
 
       <div class="category-page__layout">
 
+        <!-- Filter toggle (mobile) -->
+        <button
+          type="button"
+          class="category-page__filter-toggle"
+          @click="filtersOpen = !filtersOpen"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 5h14M5 10h10M7 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>Фильтр</span>
+          <svg
+            class="category-page__filter-toggle-chevron"
+            :class="{ 'category-page__filter-toggle-chevron--open': filtersOpen }"
+            width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
         <!-- Filters -->
-        <aside class="category-page__sidebar">
+        <aside class="category-page__sidebar" :class="{ 'category-page__sidebar--open': filtersOpen }">
 
           <!-- Filter Price -->
           <FiltersFilterPrice v-model="priceRange" />
@@ -53,12 +72,13 @@
             </button>
           </div>
 
-<pre>
-selectedBrandIds: {{ selectedBrandIds }}
-selectedGenders: {{ selectedGenders }}
-selectedSeriesIds: {{ selectedSeriesIds }}
-priceRange: {{ priceRange }}
-</pre>
+        <!-- <pre>
+        selectedBrandIds: {{ selectedBrandIds }}
+        selectedGenders: {{ selectedGenders }}
+        selectedSeriesIds: {{ selectedSeriesIds }}
+        priceRange: {{ priceRange }}
+        </pre> -->
+
         </aside>
 
         <div class="category-page__main">
@@ -75,6 +95,15 @@ priceRange: {{ priceRange }}
               <CardsProductCard :product="convertProductData(product)" />
             </li>
           </ul>
+
+          <div v-else class="category-page__empty">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 4C12.96 4 4 12.96 4 24s8.96 20 20 20 20-8.96 20-20S35.04 4 24 4zm2 30h-4v-4h4v4zm0-8h-4V14h4v12z" fill="#d1d5db"/>
+            </svg>
+            <p class="category-page__empty-title">Товары не найдены</p>
+            <p class="category-page__empty-text">По заданным параметрам ничего не найдено. Попробуйте изменить фильтры или сбросить их.</p>
+            <button type="button" class="category-page__empty-reset" @click="resetFilters">Сбросить фильтры</button>
+          </div>
 
           <div class="category-page__load-more-wrap" v-if="hasMore">
             <button type="button" class="category-page__load-more" @click="loadMore">
@@ -113,6 +142,8 @@ const apiUrlDomain = useRuntimeConfig().public.apiUrl
 const categoryId = ref(+route.params.id)
 
 const categoryTitle = ref()
+
+const filtersOpen = ref(false)
 
 const allAvaliableCategories = ref([])
 
@@ -239,6 +270,7 @@ function convertProductData(product) {
 }
 
 function onApplyFilters() {
+  filtersOpen.value = false
   fetchCards()
 }
 
@@ -247,6 +279,7 @@ function onSortChange() {
 }
 
 function resetFilters() {
+  filtersOpen.value = false
   selectedBrandIds.value = []
   selectedGenders.value = []
   selectedSeriesIds.value = []
