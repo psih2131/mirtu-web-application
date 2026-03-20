@@ -8,27 +8,6 @@
             Подборки образов, советы по уходу и гиды по выбору обуви и одежды для активной жизни.
           </p>
         </div>
-        <div class="blog-sec__nav">
-          <span class="blog-sec__counter">{{ currentPage }}/{{ totalPages }}</span>
-          <div class="blog-sec__arrows">
-            <button
-              type="button"
-              class="blog-sec__arrow blog-sec__arrow--prev"
-              aria-label="Назад"
-              @click="goPrev"
-            >
-              <span class="blog-sec__arrow-icon">←</span>
-            </button>
-            <button
-              type="button"
-              class="blog-sec__arrow blog-sec__arrow--next"
-              aria-label="Вперёд"
-              @click="goNext"
-            >
-              <span class="blog-sec__arrow-icon">→</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       <ClientOnly>
@@ -47,6 +26,26 @@
           </swiper-slide>
         </swiper-container>
       </ClientOnly>
+
+      <div class="blog-sec__nav">
+        <button
+          type="button"
+          class="blog-sec__arrow blog-sec__arrow--prev"
+          aria-label="Назад"
+          @click="goPrev"
+        >
+          <span class="blog-sec__arrow-icon">←</span>
+        </button>
+        <span class="blog-sec__counter">{{ currentPage }}/{{ totalPages }}</span>
+        <button
+          type="button"
+          class="blog-sec__arrow blog-sec__arrow--next"
+          aria-label="Вперёд"
+          @click="goNext"
+        >
+          <span class="blog-sec__arrow-icon">→</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -64,13 +63,13 @@ const currentPage = ref(1)
 const totalPages = computed(() => Math.max(1, (props.posts || []).length))
 
 const swiperApi = useSwiper(blogSwiperRef, {
-  slidesPerView: 1.1,
+  slidesPerView: 1,
   spaceBetween: 16,
   speed: 450,
   loop: true,
   breakpoints: {
-    640: { slidesPerView: 2, spaceBetween: 20 },
-    960: { slidesPerView: 3, spaceBetween: 24 },
+    760: { slidesPerView: 2, spaceBetween: 20 },
+    940: { slidesPerView: 3, spaceBetween: 24 },
   },
 })
 
