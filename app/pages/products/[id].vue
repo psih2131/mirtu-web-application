@@ -25,6 +25,19 @@
         </div>
 
         <div class="product-hero__layout">
+          <!-- Mobile info header (hidden on desktop) -->
+          <div class="product-hero__info-header product-hero__info-header--mobile">
+            <p class="product-hero__brand">{{ cardData?.basicInfo?.brand || '—' }}</p>
+            <span
+              class="product-hero__availability"
+              :class="hasAvailableSizes ? 'product-hero__availability--in' : 'product-hero__availability--out'"
+            >
+              <span class="product-hero__availability-dot" aria-hidden="true" />
+              {{ hasAvailableSizes ? 'В наличии' : 'Нет в наличии' }}
+            </span>
+            <h1 class="product-hero__title">{{ cardData?.basicInfo?.title || cardData?.displayInfo?.display_title || '—' }}</h1>
+          </div>
+
           <div class="product-hero__gallery">
             <ClientOnly>
               <ProductGallery
@@ -271,7 +284,7 @@
       </div>
     </section>
 
-    <ProductReviews :product-id="spu" />
+    <!-- <ProductReviews :product-id="spu" /> -->
 
     <SectionsProductsSliderSec
       title="Похожие товары"
