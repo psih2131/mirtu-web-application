@@ -30,9 +30,11 @@
                 class="banner-slide__img"
               >
               <div class="banner-slide__content">
-                <span v-if="slide.brand" class="banner-slide__brand">{{ slide.brand }}</span>
-                <h2 class="banner-slide__title">{{ slide.title }}</h2>
-                <p v-if="slide.subtitle" class="banner-slide__subtitle">{{ slide.subtitle }}</p>
+                <div class="banner-slide__text-bg">
+                  <span v-if="slide.brand" class="banner-slide__brand">{{ slide.brand }}</span>
+                  <h2 class="banner-slide__title">{{ slide.title }}</h2>
+                  <p v-if="slide.subtitle" class="banner-slide__subtitle">{{ slide.subtitle }}</p>
+                </div>
               </div>
             </NuxtLink>
           </swiper-slide>
