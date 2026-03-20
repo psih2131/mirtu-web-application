@@ -3,27 +3,6 @@
     <div class="container products-sec__container">
       <header class="products-sec__header">
         <h2 class="products-sec__title">{{ title }}</h2>
-        <div class="products-sec__nav">
-          <span class="products-sec__counter">{{ currentPage }}/{{ totalPages }}</span>
-          <div class="products-sec__arrows">
-            <button
-              type="button"
-              class="products-sec__arrow products-sec__arrow--prev"
-              aria-label="Назад"
-              @click="goPrev"
-            >
-              <span class="products-sec__arrow-icon">←</span>
-            </button>
-            <button
-              type="button"
-              class="products-sec__arrow products-sec__arrow--next"
-              aria-label="Вперёд"
-              @click="goNext"
-            >
-              <span class="products-sec__arrow-icon">→</span>
-            </button>
-          </div>
-        </div>
       </header>
 
       <ClientOnly>
@@ -42,6 +21,26 @@
           </swiper-slide>
         </swiper-container>
       </ClientOnly>
+
+      <div class="products-sec__nav">
+        <button
+          type="button"
+          class="products-sec__arrow products-sec__arrow--prev"
+          aria-label="Назад"
+          @click="goPrev"
+        >
+          <span class="products-sec__arrow-icon">←</span>
+        </button>
+        <span class="products-sec__counter">{{ currentPage }}/{{ totalPages }}</span>
+        <button
+          type="button"
+          class="products-sec__arrow products-sec__arrow--next"
+          aria-label="Вперёд"
+          @click="goNext"
+        >
+          <span class="products-sec__arrow-icon">→</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -75,10 +74,11 @@ const swiperApi = useSwiper(productsSwiperRef, {
   loop: true,
   loopAdditionalSlides: maxSlides,
   breakpoints: {
-    480: { slidesPerView: 2 },
-    640: { slidesPerView: 3 },
-    768: { slidesPerView: Math.min(4, maxSlides) },
-    1024: { slidesPerView: maxSlides },
+    200: { slidesPerView: 1 },
+    330: { slidesPerView: 2 },
+    760: { slidesPerView: 3 },
+    940: { slidesPerView: 4},
+    1240: { slidesPerView: maxSlides },
   },
 })
 

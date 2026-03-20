@@ -1,5 +1,5 @@
 <template>
-  <section class="brends-sec">
+  <section class="brends-sec" v-if="brands.length > 0">
     <div class="container brends-sec__container">
       <ClientOnly>
         <div class="brends-slider__fade-wrap">
@@ -9,13 +9,14 @@
             :init="false"
           >
           <swiper-slide
-            v-for="(brand, idx) in brands"
-            :key="idx"
+            v-for="brand in brands"
+            :key="brand.id"
             class="brends-slider__slide"
           >
-            <NuxtLink to="/" class="brends-slide">
+            <NuxtLink :to="`/products?brand=${brand.id}`" class="brends-slide">
               <div class="brends-slide__img-wrap">
                 <img
+                  v-if="brand.logo"
                   :src="brand.logo"
                   :alt="brand.name"
                   class="brends-slide__img"
@@ -33,7 +34,25 @@
 </template>
 
 <script setup>
+const config = useRuntimeConfig()
+const baseUrl = config.public.apiUrl
+
 const brendsSwiperRef = ref(null)
+const brands = ref([])
+
+const { data: brandsData } = await useFetch(`${baseUrl}/brands`)
+
+console.log('brandsData', brandsData.value)
+if (brandsData.value?.brands) {
+  brands.value = brandsData.value.brands
+}
+console.log('brands', brands.value)
+
+watch(brandsData, (val) => {
+  if (val?.brands) {
+    brands.value = val.brands
+  }
+})
 
 useSwiper(brendsSwiperRef, {
   slidesPerView: 'auto',
@@ -52,30 +71,4 @@ useSwiper(brendsSwiperRef, {
     1280: { slidesPerView: 'auto' },
   },
 })
-
-const brandLogosModules = import.meta.glob('~/assets/images/brends/*.svg', { eager: true, query: '?url', import: 'default' })
-
-const brandNames = [
-  'STREETBEAT',
-  'The North Face',
-  'PUMA',
-  'Nike',
-  'Reebok',
-  'Converse',
-  'adidas',
-  'VANS',
-  'New Balance',
-  'HUGO',
-  'ASICS',
-  'FILA',
-  'Jordan',
-  'Under Armour',
-]
-
-const brandLogoUrls = Object.values(brandLogosModules).map((m) => (typeof m === 'string' ? m : m?.default ?? ''))
-
-const brands = brandNames.map((name, idx) => ({
-  name,
-  logo: brandLogoUrls[idx] ?? '',
-})).filter(b => b.logo)
 </script>
