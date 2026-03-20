@@ -263,6 +263,7 @@
 </template>
 
 <script setup>
+//IMPORTS
 import { ref } from "vue";
 import headerSearch from "@/components/fields/headerSearch.vue";
 import useAllFiltrsData from "@/composables/allFiltrsData";
@@ -271,6 +272,7 @@ import { useCounterStore } from "@/stores/counter";
 import { useModalStore } from "@/stores/modal";
 import { useUserStore } from "@/stores/user";
 
+//PROPS
 const props = defineProps({
   dataContacts: {
     type: Object,
@@ -278,10 +280,14 @@ const props = defineProps({
   },
 });
 
+
+//DATA
+
 const mobMenyOpen = ref(false);
 
 const allAvaliableCategories = ref([]);
 
+//All avaliable categories from server for header nav
 const { allFiltrsData } = await useAllFiltrsData();
 allAvaliableCategories.value = allFiltrsData.value.filters.categories;
 
@@ -293,16 +299,25 @@ const userStore = useUserStore();
 
 const { authStatus, userName } = storeToRefs(userStore);
 
+
+
+//METHODS
+
+//open cart script
+function openCart() {
+  store.openCart();
+}
+
+//open auth modal script
+function openAuthModal() {
+  modalStore.openModal("auth");
+}
+
+//HOOKS
 onMounted(() => {
   userStore.checkAuthStatus();
   userStore.checkUserName();
 });
 
-function openCart() {
-  store.openCart();
-}
 
-function openAuthModal() {
-  modalStore.openModal("auth");
-}
 </script>

@@ -28,18 +28,11 @@
             </ul>
           </div>
           <div class="footer__col">
-            <h3 class="footer__heading">Бренды</h3>
+            <h3 class="footer__heading">Категории</h3>
             <ul class="footer__list">
-              <li><a href="#" class="footer__link">New Balance</a></li>
-              <li><a href="#" class="footer__link">Nike</a></li>
-              <li><a href="#" class="footer__link">Vans</a></li>
-              <li><a href="#" class="footer__link">Puma</a></li>
-              <li><a href="#" class="footer__link">Salomon</a></li>
-              <li><a href="#" class="footer__link">The North Face</a></li>
-              <li><a href="#" class="footer__link">adidas</a></li>
-              <li><a href="#" class="footer__link">HUGO</a></li>
-              <li><a href="#" class="footer__link">Eastpak</a></li>
-              <li><a href="#" class="footer__link">Все бренды</a></li>
+              <li v-for="cat in allAvaliableCategories" :key="cat.id">
+                <NuxtLink :to="`/products/categories/${cat.id}`" class="footer__link">{{ cat.name_ru }}</NuxtLink>
+              </li>
             </ul>
           </div>
           <div class="footer__col">
@@ -88,7 +81,7 @@
 
           </div>
           <div class="footer__col footer__col--newsletter">
-            <p class="footer__newsletter-title">
+            <!-- <p class="footer__newsletter-title">
               Узнавайте первыми о новинках и акциях — подпишитесь на нашу рассылку
             </p>
             <form class="footer__form" @submit.prevent="">
@@ -110,7 +103,7 @@
                 и
                 <a href="#" class="footer__consent-link">оферты</a>.
               </span>
-            </label>
+            </label> -->
             <div class="footer__payments">
               <img :src="visaImg" alt="Visa" class="footer__payment-img" width="48" height="32">
               <img :src="mastercardImg" alt="Mastercard" class="footer__payment-img" width="48" height="32">
@@ -137,7 +130,8 @@
 import visaImg from '~/assets/images/payment/visa.png'
 import mastercardImg from '~/assets/images/payment/mastercard.png'
 import mirImg from '~/assets/images/payment/mir.png'
-import {ref} from 'vue'
+import { ref } from 'vue'
+import useAllFiltrsData from '@/composables/allFiltrsData'
 
 const props = defineProps({
   dataContacts: {
@@ -145,4 +139,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const allAvaliableCategories = ref([])
+const { allFiltrsData } = await useAllFiltrsData()
+allAvaliableCategories.value = allFiltrsData.value.filters.categories
 </script>
