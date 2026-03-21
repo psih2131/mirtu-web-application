@@ -74,11 +74,11 @@ const swiperApi = useSwiper(productsSwiperRef, {
   loop: true,
   loopAdditionalSlides: maxSlides,
   breakpoints: {
-    200: { slidesPerView: 1 },
-    330: { slidesPerView: 2 },
-    760: { slidesPerView: 3 },
-    940: { slidesPerView: 4},
-    1240: { slidesPerView: maxSlides },
+    200: { slidesPerView: 1, spaceBetween: 10 },
+    330: { slidesPerView: 2 ,spaceBetween: 15},
+    760: { slidesPerView: 3 ,spaceBetween: 24},
+    940: { slidesPerView: 4, spaceBetween: 24},
+    1240: { slidesPerView: maxSlides, spaceBetween: 24},
   },
 })
 

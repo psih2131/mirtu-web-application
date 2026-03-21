@@ -34,25 +34,36 @@
 </template>
 
 <script setup>
+import { useRuntimeConfig } from "#app";
+import {ref, onMounted} from "vue"
 const config = useRuntimeConfig()
 const baseUrl = config.public.apiUrl
 
 const brendsSwiperRef = ref(null)
 const brands = ref([])
 
-const { data: brandsData } = await useFetch(`${baseUrl}/brands`)
+const { data: brandsData } = await useFetch(`${baseUrl}/api/brands`)
 
 console.log('brandsData', brandsData.value)
-if (brandsData.value?.brands) {
-  brands.value = brandsData.value.brands
-}
-console.log('brands', brands.value)
+brands.value = brandsData.value.brands
 
-watch(brandsData, (val) => {
-  if (val?.brands) {
-    brands.value = val.brands
-  }
-})
+
+// brands.value = brandsData.value
+// console.log('brands', brands.value)
+
+// watch(brandsData, (val) => {
+//   if (val?.brands) {
+//     brands.value = val.brands
+//   }
+// })
+
+
+// async function getBrands() {
+//   const brendstest = await fetch(`${baseUrl}/api/brands`)
+//   const brendstestData = await brendstest.json()
+//   console.log('brendstest', brendstestData)
+ 
+// }
 
 useSwiper(brendsSwiperRef, {
   slidesPerView: 'auto',
@@ -71,4 +82,8 @@ useSwiper(brendsSwiperRef, {
     1280: { slidesPerView: 'auto' },
   },
 })
+
+// onMounted(() => {
+//   getBrands()
+// })
 </script>
