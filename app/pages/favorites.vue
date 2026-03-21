@@ -59,48 +59,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-.favorites-page {
-  padding-top: 200px;
-  padding-bottom: 100px;
-  background: #fff;
-}
 
-.favorites-page__container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.favorites-page__grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.favorites-page__grid-item {
-  min-width: 0;
-}
-
-.favorites-page__empty {
-  color: #6b7280;
-  font-size: 1rem;
-  margin: 0;
-}
-
-@media (max-width: 1024px) {
-  .favorites-page__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .favorites-page__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-}
-</style>
