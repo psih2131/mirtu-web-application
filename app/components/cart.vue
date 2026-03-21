@@ -80,9 +80,12 @@
               <dt>Итого</dt>
               <dd>{{ formatPrice(counterStore.cartSubtotal) }} {{ summarySymbol }}</dd>
             </div>
-            <NuxtLink to="/order" class="cart__checkout" @click="closeCart">
-              Оформить заказ
-            </NuxtLink>
+            <div class="cart__checkout-wrapper">
+              <NuxtLink to="/order" class="cart__checkout" @click="closeCart">
+                Оформить заказ
+              </NuxtLink>
+            </div>
+            
           </aside>
         </div>
       </div>
