@@ -57,7 +57,10 @@
       </div>
       <p v-else class="order-page__success-empty">В заказе нет товаров</p>
     </div>
-    <NuxtLink to="/" class="order-page__success-btn">Продолжить покупки</NuxtLink>
+    <div class="order-page__success-btn-wrapper">
+      <NuxtLink to="/" class="order-page__success-btn">Продолжить покупки</NuxtLink>
+    </div>
+    
   </div>
 </template>
 
