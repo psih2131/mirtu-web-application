@@ -803,6 +803,11 @@
   border-radius: 10px;
 }
 
+.user-cabinet-returns__text-link {
+  color: #1e3a5f;
+  text-decoration: underline;
+  font-weight: 600;
+}
 .user-cabinet-returns__buttons {
   display: flex;
   flex-wrap: wrap;
@@ -847,6 +852,16 @@
 
     &:hover {
       background: #006699;
+      color: #fff;
+    }
+  }
+  &--whatsapp {
+    background: #25D366;
+    color: #fff;
+    border: 1px solid #25D366;
+
+    &:hover {
+      background: #128C7E;
       color: #fff;
     }
   }
