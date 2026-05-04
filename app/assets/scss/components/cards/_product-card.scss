@@ -171,6 +171,20 @@
   border-color: #d1d5db;
 }
 
+.product-card__dop-info{
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.product-card__style{
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
 
 
 @media only screen and (max-width: 1750px) {

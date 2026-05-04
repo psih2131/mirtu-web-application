@@ -119,6 +119,8 @@ async function fetchCart(opts = {}) {
     }
     const result = await res.json()
     counterStore.setCartItems(result?.items ?? [])
+
+    console.log('cart items:', counterStore.cartItems)
   } catch (err) {
     console.error('Cart fetch error:', err)
   } finally {

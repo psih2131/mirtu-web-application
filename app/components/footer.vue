@@ -107,7 +107,7 @@
             <div class="footer__payments">
               <img :src="visaImg" alt="Visa" class="footer__payment-img" width="48" height="32">
               <img :src="mastercardImg" alt="Mastercard" class="footer__payment-img" width="48" height="32">
-              <img :src="mirImg" alt="Мир" class="footer__payment-img" width="48" height="32">
+              <!-- <img :src="mirImg" alt="Мир" class="footer__payment-img" width="48" height="32"> -->
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@
         <div class="footer__bottom-inner">
 
             <p class="footer__copyright">© mirtu.kz — официальный интернет-сайт</p>
-            <p class="footer__credits">Разработка и дизайн: Roman Kuzmych</p>
+            <p class="footer__credits">Разработка и дизайн: <a class="footer__credits-link" href="https://kuzmych.com" target="_blank">Roman Kuzmych</a></p>
 
         </div>
       </div>
@@ -142,5 +142,5 @@ const props = defineProps({
 
 const allAvaliableCategories = ref([])
 const { allFiltrsData } = await useAllFiltrsData()
-allAvaliableCategories.value = allFiltrsData.value.filters.categories
+allAvaliableCategories.value = allFiltrsData.value?.filters?.categories ?? []
 </script>

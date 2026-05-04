@@ -149,7 +149,7 @@ const allAvaliableCategories = ref([])
 
 
 const { allFiltrsData } = await useAllFiltrsData()
-allAvaliableCategories.value = allFiltrsData.value.filters.categories
+allAvaliableCategories.value = allFiltrsData.value?.filters?.categories ?? []
 
 const apiBase = apiUrlDomain.endsWith('/api') ? apiUrlDomain : apiUrlDomain.replace(/\/?$/, '') + '/api'
 
@@ -258,6 +258,7 @@ function getCategoryTitle() {
 function convertProductData(product) {
   return {
     spu: product.basicInfo.spuPoizon || '',
+    slug: product.displayInfo.slug || '',
     article: product.basicInfo.articlePoizon || '',
     title: product.displayInfo.display_title || '',
     subtitle: product.basicInfo.title || '',
@@ -266,6 +267,8 @@ function convertProductData(product) {
     currency_code: product.displayInfo.displayPriceCurrency || '',
     img: product.displayInfo.display_image,
     category: product.basicInfo?.category?.category_ru || '',
+    style: product.displayInfo.display_style || '',
+
   }
 }
 

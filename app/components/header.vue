@@ -249,7 +249,7 @@
           ></a>
           <p class="mob-meny__phone-hour-work">Ежедневно с 10:00 до 21:00</p>
         </div>
-        <div class="mob-meny__email">
+        <div class="mob-meny__email" v-if="dataContacts?.email_contact">
           <a
             :href="`mailto:${dataContacts.email_contact}`"
             class="mob-meny__email-link"
@@ -289,7 +289,7 @@ const allAvaliableCategories = ref([]);
 
 //All avaliable categories from server for header nav
 const { allFiltrsData } = await useAllFiltrsData();
-allAvaliableCategories.value = allFiltrsData.value.filters.categories;
+allAvaliableCategories.value = allFiltrsData.value?.filters?.categories ?? [];
 
 const store = useCounterStore();
 

@@ -38,6 +38,8 @@
             <h1 class="product-hero__title">{{ cardData?.basicInfo?.title || cardData?.displayInfo?.display_title || '—' }}</h1>
           </div>
 
+
+          <!-- Gallery -->
           <div class="product-hero__gallery">
             <ClientOnly>
               <ProductGallery
@@ -49,6 +51,7 @@
             </ClientOnly>
           </div>
 
+          <!-- Info -->
           <div class="product-hero__info">
             <div class="product-hero__info-header">
               <p class="product-hero__brand">{{ cardData?.basicInfo?.brand || '—' }}</p>
@@ -77,12 +80,14 @@
               <span class="product-hero__option-label">Цвет: {{ productColor }}</span>
             </div>
 
+            <!-- Sizes -->
             <div class="product-hero__option">
               <span class="product-hero__option-label">Размер: {{ selectedVariant?.args?.Размер ?? selectedVariant?.style_value ?? '—' }}</span>
               <div class="product-hero__sizes">
+
+                <template v-for="(variant, i) in variants" :key="variant.skuIdPoizon || i">
                 <button
-                  v-for="(variant, i) in variants"
-                  :key="variant.skuIdPoizon || i"
+                  v-if="variant.isAvailable"
                   type="button"
                   class="product-hero__size-btn"
                   :class="{
@@ -94,6 +99,8 @@
                 >
                   {{ variant.args?.Размер ?? variant.style_value ?? '—' }}
                 </button>
+                </template>
+                
               </div>
               <button
                 v-if="hasSizeTable"
@@ -105,6 +112,7 @@
               </button>
               <NuxtLink v-else to="#size-guide" class="product-hero__size-guide">Таблица размеров</NuxtLink>
             </div>
+
 
             <div v-if="hasAvailableSizes" class="product-hero__cta">
               <button
@@ -163,6 +171,7 @@
               </dl>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -317,11 +326,21 @@ const modalStore = useModalStore()
 const counterStore = useCounterStore()
 
 const spu = route.params.id
+const slug = route.params.slug
 
 uiStore.showPreloader()
 let cardDataRef
 try {
-  cardDataRef = await useFetch(`${apiBase}/card/${spu}`, {
+  let slugRequest = null
+
+  if (slug) {
+    slugRequest = slug
+  } else {
+    slugRequest = spu
+  }
+
+  
+  cardDataRef = await useFetch(`${apiBase}/card/${slugRequest}`, {
     method: 'GET',
     key: `card-${spu}`,
   })
@@ -361,7 +380,19 @@ const hasSizeTable = computed(() => sizeTable.value != null)
 
 const sizeTableModalOpen = ref(false)
 
-const variants = computed(() => cardData.value?.variants || [])
+const variants = computed(() => {
+  const raw = cardData.value?.variants || []
+  return [...raw].sort((a, b) => {
+    const rawA = a.args?.['Размер']
+    const rawB = b.args?.['Размер']
+    const numA = rawA != null && rawA !== '' ? parseFloat(String(rawA).replace(',', '.')) : null
+    const numB = rawB != null && rawB !== '' ? parseFloat(String(rawB).replace(',', '.')) : null
+    if (numA === null && numB === null) return 0
+    if (numA === null) return 1
+    if (numB === null) return -1
+    return numA - numB
+  })
+})
 
 const hasAvailableSizes = computed(() =>
   variants.value.some((v) => v.isAvailable === true)

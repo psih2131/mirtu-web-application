@@ -45,7 +45,7 @@ const brands = ref([])
 const { data: brandsData } = await useFetch(`${baseUrl}/api/brands`)
 
 console.log('brandsData', brandsData.value)
-brands.value = brandsData.value.brands
+brands.value = brandsData.value?.brands ?? []
 
 
 // brands.value = brandsData.value

@@ -2,7 +2,7 @@
   <article class="product-card">
     <div class="product-card__top">
       <div class="product-card__img-wrap">
-        <NuxtLink :to="`/products/${product.spu}`" class="product-card__link">
+        <NuxtLink :to="`/products/${product.slug}` || `/products/${product.spu}`" class="product-card__link">
           <img
             :src="product.img"
             :alt="product.title"
@@ -50,7 +50,11 @@
       <div class="product-card__price-row">
         <span class="product-card__price">{{ formatPrice(product.price) }}</span>
 
-        <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
+        <div class="product-card__dop-info">
+          <!-- <span v-if="product.style" class="product-card__style">{{ product.style }}</span> -->
+          <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
+        </div>
+        
         <!-- <div v-if="product.colors?.length" class="product-card__colors" aria-label="Доступные цвета">
           <span
             v-for="(color, i) in product.colors"
