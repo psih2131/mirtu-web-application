@@ -45,6 +45,19 @@
         <span class="order-page__success-value">{{ formatOrderDate(order.created_at) }}</span>
       </div>
     </div>
+
+    <div v-if="payMethod === 'KASPI'" class="order-page__success-qr">
+      <p class="order-page__success-qr-title">Для оплаты заказа используйте этот QR-код</p>
+      <p class="order-page__success-qr-text">
+        После того как платёж будет подтверждён нашим менеджером, мы подтвердим заказ и вы получите уведомление.
+      </p>
+      <img
+        :src="kaspiQrImg"
+        alt="QR-код Kaspi для оплаты"
+        class="order-page__success-qr-img"
+      >
+    </div>
+
     <div class="order-page__success-products">
       <h3 class="order-page__success-products-title">Товары в заказе</h3>
       <div v-if="order.items?.length" class="order-page__products">
@@ -66,12 +79,15 @@
 
 <script setup>
 import OrderProcuctCard from '@/components/cards/OrderProcuctCard.vue'
-
-import {ref} from 'vue'
+import kaspiQrImg from '~/assets/images/qr/kaspi.png'
 
 const props = defineProps({
   order: {
     type: Object,
+    required: true,
+  },
+  payMethod: {
+    type: String,
     required: true,
   },
 })

@@ -14,7 +14,7 @@
       <OrderAlertEmpty v-else-if="!cartData?.items?.length && cartData !== null" />
 
       <!-- layout for success -->
-      <OrderSuccess v-else-if="createdOrder" :key="createdOrder?.id" :order="createdOrder" />
+      <OrderSuccess v-else-if="createdOrder" :key="createdOrder?.id" :order="createdOrder" :payMethod="paymentMethod" />
 
       <!-- layout for order -->
       <div v-else class="order-page__layout">
@@ -44,12 +44,39 @@
 
             <div v-if="form.shippingMethod === 'CDEK'" class="order-page__form">
               <div class="order-page__form-row">
-                <label class="order-page__label">Адрес <span class="order-page__required">*</span></label>
-                <input v-model="form.address" type="text" class="order-page__input order-page__input--wide" placeholder="Улица, дом, квартира" />
+                <label class="order-page__label">Способ доставки CDEK</label>
+                <div class="order-page__options order-page__options--delivery">
+                  <button
+                    type="button"
+                    class="order-page__option"
+                    :class="{ 'order-page__option--active': form.cdekDeliveryType === 'COURIER' }"
+                    @click="form.cdekDeliveryType = 'COURIER'"
+                  >
+                    <span class="order-page__option-title">Курьер</span>
+                    <span class="order-page__option-desc">Доставка по адресу</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="order-page__option"
+                    :class="{ 'order-page__option--active': form.cdekDeliveryType === 'PICKUP_POINT' }"
+                    @click="form.cdekDeliveryType = 'PICKUP_POINT'"
+                  >
+                    <span class="order-page__option-title">Пункт выдачи</span>
+                    <span class="order-page__option-desc">Забрать в ПВЗ CDEK</span>
+                  </button>
+                </div>
               </div>
               <div class="order-page__form-row">
                 <label class="order-page__label">Город (CDEK) <span class="order-page__required">*</span></label>
                 <OrderCdekCityWidget v-model="form.cdekCity" />
+              </div>
+              <div v-if="form.cdekDeliveryType === 'COURIER'" class="order-page__form-row">
+                <label class="order-page__label">Адрес <span class="order-page__required">*</span></label>
+                <input v-model="form.address" type="text" class="order-page__input order-page__input--wide" placeholder="Улица, дом, квартира" />
+              </div>
+              <div v-if="form.cdekDeliveryType === 'PICKUP_POINT'" class="order-page__form-row">
+                <label class="order-page__label">Адрес пункта выдачи <span class="order-page__required">*</span></label>
+                <input v-model="form.cdekPickupPointAddress" type="text" class="order-page__input order-page__input--wide" placeholder="Адрес ПВЗ CDEK" />
               </div>
             </div>
 
@@ -98,6 +125,18 @@
             </div>
             <div class="order-page__form">
               <div class="order-page__form-row">
+                <label class="order-page__label">Фамилия <span class="order-page__required">*</span></label>
+                <input v-model="form.lastName" type="text" class="order-page__input order-page__input--wide" placeholder="Иванов" />
+              </div>
+              <div class="order-page__form-row">
+                <label class="order-page__label">Имя <span class="order-page__required">*</span></label>
+                <input v-model="form.firstName" type="text" class="order-page__input order-page__input--wide" placeholder="Иван" />
+              </div>
+              <div class="order-page__form-row">
+                <label class="order-page__label">Отчество</label>
+                <input v-model="form.middleName" type="text" class="order-page__input order-page__input--wide" placeholder="Иванович" />
+              </div>
+              <div class="order-page__form-row">
                 <label class="order-page__label">Телефон для связи <span class="order-page__required">*</span></label>
                 <input v-model="form.contactPhone" type="tel" inputmode="numeric" class="order-page__input order-page__input--wide" placeholder="77001234567" @input="form.contactPhone = String(form.contactPhone || '').replace(/\D/g, '')" />
               </div>
@@ -119,13 +158,9 @@
               <span class="order-page__step-badge">4</span>
               <h2 class="order-page__section-title">Способ оплаты</h2>
             </div>
-            <div class="order-page__payment-card">
-              <img :src="kaspiLogo" alt="Каспи" class="order-page__payment-logo">
-              <div class="order-page__payment-content">
-                <h3 class="order-page__payment-title">Каспи</h3>
-                <p class="order-page__payment-desc">Оплата картой Каспи или рассрочка</p>
-              </div>
-            </div>
+            <!-- payment methods -->
+            <OrderPaymentMethods v-model:payment-method="paymentMethod" />
+            {{ 'paymentMethod: ' + paymentMethod }}
           </section>
         </main>
 
@@ -151,10 +186,6 @@
         </aside>
       </div>
 
-      <section v-if="cartData?.items?.length && !createdOrder" class="order-page__json-section">
-        <h2 class="order-page__json-title">JSON для POST /order</h2>
-        <pre class="order-page__json-block">{{ orderPayloadJson }}</pre>
-      </section>
       
     </div>
   </div>
@@ -170,7 +201,7 @@ import { useUiStore } from '@/stores/ui'
 
 import OrderProcuctCard from '@/components/cards/OrderProcuctCard.vue'
 
-import kaspiLogo from '~/assets/images/payment/kaspi.png'
+import OrderPaymentMethods from '@/components/order/OrderPaymentMethods.vue'
 
 
 
@@ -189,13 +220,20 @@ const deliveryMethods = ref([])
 
 const form = reactive({
   shippingMethod: 'CDEK',
+  cdekDeliveryType: 'COURIER',
   address: '',
+  cdekPickupPointAddress: '',
   cdekCity: null,
   deliveryOption: 'STANDARD',
   pickupAddressId: null,
+  firstName: '',
+  lastName: '',
+  middleName: '',
   contactPhone: '',
   promoCode: '',
 })
+
+const paymentMethod = ref('KASPI')
 
 const isSubmitting = ref(false)
 const submitError = ref(null)
@@ -214,31 +252,6 @@ const cartSubtotal = computed(() =>
 const summarySymbol = computed(() => cartData.value?.items?.[0]?.currency_symbol || '₸')
 const discountApplied = ref(0) // при применении промокода
 const totalToPay = computed(() => cartSubtotal.value - discountApplied.value)
-
-// строим payload для заказа
-function buildOrderPayload() {
-  const phone = form.contactPhone.replace(/\D/g, '').replace(/^8|^7/, '').slice(-10)
-  const payload = {
-    contact_phone: phone ? `+7${phone}` : form.contactPhone,
-    currency: 'KZT',
-    shipping_method: form.shippingMethod,
-    delivery_option_method: form.deliveryOption,
-    clear_cart: true,
-  }
-  if (form.shippingMethod === 'CDEK') {
-    payload.address = form.address
-    payload.cdek_city_code = form.cdekCity?.code ?? null
-  }
-  if (form.shippingMethod === 'SELF_PICKUP') {
-    payload.pickup_address_id = form.pickupAddressId
-  }
-  if (form.promoCode?.trim()) {
-    payload.promo_code = form.promoCode.trim()
-  }
-  return payload
-}
-
-const orderPayloadJson = computed(() => JSON.stringify(buildOrderPayload(), null, 2))
 
 function formatPrice(v) {
   return Number(v || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -331,28 +344,175 @@ async function submitOrder() {
   }
 
   isSubmitting.value = true
-  try {
-    const payload = buildOrderPayload()
-    const res = await fetch(`${apiBase}/order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    })
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      submitError.value = data.message || data.error || `Ошибка ${res.status}`
-      return
+  const apiOrderSelfFickup = '/order/self-pickup'
+  const apiOrderCdekCourier = '/order/cdek/courier'
+  const apiOrderCdekPickupPoint = '/order/cdek/pickup-point'
+
+  const phone = form.contactPhone.replace(/\D/g, '').replace(/^8|^7/, '').slice(-10)
+  const contactPhone = phone ? `+7${phone}` : form.contactPhone
+
+  try {
+    // самовывоз
+    if (form.shippingMethod === 'SELF_PICKUP') {
+      const res = await fetch(`${apiBase}${apiOrderSelfFickup}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          contact_phone: contactPhone,
+          first_name: form.firstName,
+          last_name: form.lastName,
+          middle_name: form.middleName,
+          pickup_address_id: form.pickupAddressId,
+          currency: 'KZT',
+          delivery_option_method: form.deliveryOption,
+          promo_code: form.promoCode?.trim() || undefined,
+          clear_cart: true,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        submitError.value = data.message || data.error || `Ошибка ${res.status}`
+        return
+      }
+
+      const raw = await res.json()
+      const createdOrderForCardPayment = raw?.data ?? raw
+
+      if(paymentMethod.value === 'CARD') {
+          // --- register.do (application/x-www-form-urlencoded) ---
+
+        const orderData = createdOrderForCardPayment?.order ?? createdOrderForCardPayment
+        const orderNumber = createdOrderForCardPayment?.id ?? orderData?.id
+        const amount = orderData?.payment_amount_kzt ?? orderData?.amount
+
+        if (!orderNumber || amount == null) {
+          submitError.value = 'Не удалось получить данные заказа для оплаты'
+          return
+        }
+
+        const registerPayload = {
+          orderNumber: String(orderNumber),
+          amount, // KZT: тенге × 100 (10 000 ₸ → 1000000)
+          returnUrl: `${window.location.origin}/order-confirm`,
+          failUrl: `${window.location.origin}/order-failed`,
+          currency: '398',
+          language: 'ru',
+          sessionTimeoutSecs: '1200',
+        }
+        const cardPaymentResult = await cardPayment(registerPayload)
+        if (!cardPaymentResult?.ok) {
+          submitError.value = cardPaymentResult.bodyText
+        }
+      } else {
+        createdOrder.value = createdOrderForCardPayment?.order ?? createdOrderForCardPayment
+      }
     }
 
-    const raw = await res.json()
-    createdOrder.value = raw?.data ?? raw
-    console.log('created order:', createdOrder.value)
+    // CDEK
+    if (form.shippingMethod === 'CDEK') {
+      // курьер
+      if (form.cdekDeliveryType === 'COURIER') {
+        const res = await fetch(`${apiBase}${apiOrderCdekCourier}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            contact_phone: contactPhone,
+            first_name: form.firstName,
+            last_name: form.lastName,
+            middle_name: form.middleName,
+            address: form.address,
+            cdek_city_code: form.cdekCity.code,
+            currency: 'KZT',
+            delivery_option_method: form.deliveryOption,
+            promo_code: form.promoCode?.trim() || undefined,
+            clear_cart: true,
+          }),
+        })
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}))
+          submitError.value = data.message || data.error || `Ошибка ${res.status}`
+          return
+        }
+
+        const raw = await res.json()
+        createdOrder.value = raw?.data ?? raw
+        console.log('created order:', createdOrder.value)
+        return
+      }
+
+      // пункт выдачи
+      if (form.cdekDeliveryType === 'PICKUP_POINT') {
+        const res = await fetch(`${apiBase}${apiOrderCdekPickupPoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            contact_phone: contactPhone,
+            first_name: form.firstName,
+            last_name: form.lastName,
+            middle_name: form.middleName,
+            cdek_pickup_point_address: form.cdekPickupPointAddress,
+            cdek_city_code: form.cdekCity.code,
+            currency: 'KZT',
+            delivery_option_method: form.deliveryOption,
+            promo_code: form.promoCode?.trim() || undefined,
+            clear_cart: true,
+          }),
+        })
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}))
+          submitError.value = data.message || data.error || `Ошибка ${res.status}`
+          return
+        }
+
+        const raw = await res.json()
+        createdOrder.value = raw?.data ?? raw
+        console.log('created order:', createdOrder.value)
+      }
+    }
   } catch (e) {
+    console.error('submit order error:', e)
     submitError.value = 'Ошибка сети. Попробуйте позже.'
   } finally {
     isSubmitting.value = false
+  }
+}
+
+
+/** Bereke redirect: register.do → formUrl (дока Bereke, шаги 3–5) */
+async function cardPayment(registerPayload) {
+  const res = await fetch('/api/payment/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(registerPayload),
+  })
+
+  const bodyText = await res.text()
+
+  let result = null
+  try {
+    result = bodyText ? JSON.parse(bodyText) : null
+  } catch {
+    result = bodyText
+  }
+
+  if (result?.formUrl) {
+    if (result.orderId) {
+      sessionStorage.setItem('berekeOrderId', String(result.orderId))
+    }
+    window.location.href = result.formUrl
+    return { ok: true }
+  }
+
+  return {
+    ok: false,
+    bodyText: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
   }
 }
 

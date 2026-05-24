@@ -291,6 +291,8 @@ const allAvaliableCategories = ref([]);
 const { allFiltrsData } = await useAllFiltrsData();
 allAvaliableCategories.value = allFiltrsData.value?.filters?.categories ?? [];
 
+console.log(allAvaliableCategories.value);
+
 const store = useCounterStore();
 
 const modalStore = useModalStore();

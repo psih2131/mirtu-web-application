@@ -36,8 +36,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     cdecAccountId: process.env.NUXT_CDEC_ACCOUNT_ID || '',
     cdecApiKey: process.env.NUXT_SECRET_CDEK_API_KEY || '',
-    cdecApiUrl: process.env.NUXT_PUBLIC_CDEK_API_URL || '', 
-    
+    cdecApiUrl: process.env.NUXT_PUBLIC_CDEK_API_URL || '',
+
+    berekePaymentUrl: process.env.NUXT_BEREKE_PAYMENT_URL || '',
+    berekePaymentLogin: process.env.NUXT_BEREKE_PAYMENT_LOGIN || '',
+    berekePaymentPassword: process.env.NUXT_BEREKE_PAYMENT_PASSWORD || '',
+
     public: {
       apiUrl: '', // overridden by NUXT_PUBLIC_API_URL from .env
     },

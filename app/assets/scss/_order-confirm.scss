@@ -1,0 +1,129 @@
+// Страница подтверждения оплаты заказа
+
+.order-confirm {
+  padding-top: 200px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.order-confirm__container {
+  display: flex;
+  justify-content: center;
+}
+
+.order-confirm__card {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 32px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid rgba(30, 58, 95, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(30, 58, 95, 0.08);
+}
+
+.order-confirm__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 24px;
+  color: #16a34a;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.12) 0%, rgba(22, 163, 74, 0.04) 100%);
+  border-radius: 50%;
+
+  &--pending {
+    color: #d97706;
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.12) 0%, rgba(217, 119, 6, 0.04) 100%);
+  }
+
+  &--error {
+    color: #dc2626;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(220, 38, 38, 0.04) 100%);
+  }
+}
+
+.order-confirm__raw {
+  margin: 0 0 24px;
+  padding: 12px;
+  max-height: 200px;
+  overflow: auto;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.order-confirm__title {
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
+.order-confirm__text {
+  margin: 0 0 32px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.order-confirm__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-confirm__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.order-confirm__btn--primary {
+  color: #fff;
+  background: #1e3a5f;
+
+  &:hover {
+    background: #2d4a6f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+  }
+}
+
+.order-confirm__btn--secondary {
+  color: #1e3a5f;
+  background: #f3f4f6;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+@media only screen and (max-width: 1240px) {
+  .order-confirm {
+    padding-top: 140px;
+    padding-bottom: 60px;
+  }
+
+  .order-confirm__card {
+    padding: 32px 20px;
+  }
+
+  .order-confirm__title {
+    font-size: 20px;
+  }
+}

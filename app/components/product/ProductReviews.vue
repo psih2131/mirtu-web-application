@@ -58,8 +58,18 @@
                 placeholder="Опишите ваши впечатления от товара..."
               />
             </div>
-            <button type="submit" class="product-reviews__submit" :disabled="!form.text?.trim()">
-              Отправить
+            <p v-if="formError" class="product-reviews__form-message product-reviews__form-message--error" role="alert">
+              {{ formError }}
+            </p>
+            <p v-if="formSuccess" class="product-reviews__form-message product-reviews__form-message--ok">
+              {{ formSuccess }}
+            </p>
+            <button
+              type="submit"
+              class="product-reviews__submit"
+              :disabled="!canSubmit || submitting"
+            >
+              {{ submitting ? 'Отправка…' : 'Отправить' }}
             </button>
           </form>
         </div>
@@ -70,25 +80,91 @@
 
 <script setup lang="ts">
 const props = defineProps<{
+  /** SPU карточки — уходит в теле как `card_spu_id`. */
   productId?: string | number
 }>()
+
+const config = useRuntimeConfig()
+const apiUrlDomain = config.public.apiUrl as string
+const apiBase =
+  apiUrlDomain?.endsWith('/api')
+    ? apiUrlDomain
+    : `${(apiUrlDomain ?? '').replace(/\/?$/, '') || ''}/api`
+const reviewsUrl = [String(apiBase).replace(/\/+$/, ''), 'reviews'].join('/')
 
 const reviews = ref<Array<{ author: string; text: string; rating: number; date?: string }>>([])
 const form = reactive({
   text: '',
   rating: 5,
 })
+const submitting = ref(false)
+const formError = ref('')
+const formSuccess = ref('')
 
-function onSubmit() {
-  if (!form.text?.trim()) return
-  reviews.value.push({
-    author: 'Вы',
-    text: form.text.trim(),
-    rating: form.rating,
-    date: new Date().toLocaleDateString('ru-RU'),
-  })
-  form.text = ''
-  form.rating = 5
+const cardSpuIdForApi = computed(() => {
+  const n = Number(props.productId)
+  if (Number.isFinite(n) && n > 0) return Math.trunc(n)
+  return null
+})
+
+const canSubmit = computed(() => Boolean(form.text?.trim()) && cardSpuIdForApi.value != null)
+
+async function onSubmit() {
+  if (!canSubmit.value || submitting.value) return
+  const card_spu_id = cardSpuIdForApi.value
+  if (card_spu_id == null) return
+
+  const comment = form.text.trim()
+  const rating = Math.min(5, Math.max(1, Math.round(form.rating)))
+
+  formError.value = ''
+  formSuccess.value = ''
+  submitting.value = true
+  try {
+    const res = await fetch(reviewsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        card_spu_id,
+        rating,
+        comment,
+      }),
+    })
+
+    if (!res.ok) {
+      let detail = `Ошибка ${res.status}`
+      try {
+        const errBody = await res.json()
+        if (errBody && typeof errBody === 'object') {
+          const msg = (errBody as { message?: string; detail?: string }).message
+            ?? (errBody as { detail?: string }).detail
+          if (typeof msg === 'string') detail = msg
+        }
+      } catch {
+        /* ignore */
+      }
+      formError.value = detail
+      return
+    }
+
+    reviews.value.push({
+      author: 'Вы',
+      text: comment,
+      rating,
+      date: new Date().toLocaleDateString('ru-RU'),
+    })
+    form.text = ''
+    form.rating = 5
+    formSuccess.value = 'Отзыв отправлен.'
+    window.setTimeout(() => {
+      formSuccess.value = ''
+    }, 4000)
+  } catch {
+    formError.value = 'Не удалось отправить отзыв. Проверьте соединение.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -260,6 +336,20 @@ function onSubmit() {
 
   &::placeholder {
     color: #9ca3af;
+  }
+}
+
+.product-reviews__form-message {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+
+  &--error {
+    color: #b91c1c;
+  }
+
+  &--ok {
+    color: #15803d;
   }
 }
 

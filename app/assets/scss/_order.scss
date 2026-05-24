@@ -425,23 +425,51 @@
   color: #6b7280;
 }
 
-// Карточка способа оплаты (Каспи)
+.order-page__payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+// Карточка способа оплаты
 .order-page__payment-card {
   display: inline-flex;
   align-items: center;
-
-  gap: 1.5rem;
-  padding: 1.5rem 1.75rem;
+  gap: 24px;
+  padding: 24px 28px;
   width: fit-content;
-  max-width: 50%;
+  max-width: calc(50% - 8px);
   background: #fff;
-  border: 2px solid #86efac;
+  border: 2px solid #e5e7eb;
   border-radius: 14px;
-  transition: border-color 0.2s;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
 
   &:hover {
-    border-color: #4ade80;
+    border-color: #cbd5e1;
   }
+
+  &--active {
+    border-color: #86efac;
+    box-shadow: 0 0 0 1px rgba(134, 239, 172, 0.5);
+
+    &:hover {
+      border-color: #4ade80;
+    }
+  }
+}
+
+.order-page__payment-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  color: #1e3a5f;
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.08) 0%, rgba(30, 58, 95, 0.04) 100%);
+  border-radius: 12px;
 }
 
 .order-page__payment-logo {
@@ -665,6 +693,9 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .order-page__submit {
@@ -706,6 +737,42 @@
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
+}
+
+.order-page__success-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 32px 36px;
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.order-page__success-qr-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #1e3a5f;
+}
+
+.order-page__success-qr-text {
+  margin: 0 0 24px;
+  max-width: 420px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.order-page__success-qr-img {
+  display: block;
+  max-width: 280px;
+  width: 100%;
+  height: auto;
 }
 
 .order-page__success-row {
@@ -924,11 +991,22 @@
     display: block;
     flex-wrap: wrap;
   }
+  .order-page__payment-methods{
+    display: block;
+  }
   .order-page__payment-card{
     width: 100%;
     max-width: 100%;
-    padding: 20px ;
+    padding: 20px;
+    margin-bottom: 10px;
 
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
+  .order-page__payment-icon{
+    width: 64px;
+    height: 64px;
   }
   .order-page__payment-logo{
     width: 120px;
