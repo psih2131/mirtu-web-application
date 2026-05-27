@@ -26,10 +26,20 @@
         <span class="order-page__success-label">Сумма:</span>
         <span class="order-page__success-value order-page__success-value--total">
           <span class="order-page__success-price-wrap">
-            {{ formatPrice(order.payment_amount_kzt || order.amount) }} {{ order.currency_symbol || '₸' }}
-            <s v-if="hasDiscount" class="order-page__success-old-price">{{ formatPrice(oldSum) }} {{ order.currency_symbol || '₸' }}</s>
+            {{ formatPrice(orderTotal) }} {{ currencySymbol }}
+            <s v-if="hasDiscount" class="order-page__success-old-price">{{ formatPrice(oldSum) }} {{ currencySymbol }}</s>
           </span>
-          <span v-if="hasDiscount" class="order-page__success-discount">Скидка −{{ formatPrice(order.discount_applied) }} {{ order.currency_symbol || '₸' }}</span>
+          <span v-if="hasDiscount" class="order-page__success-discount">Скидка −{{ formatPrice(order.discount_applied) }} {{ currencySymbol }}</span>
+        </span>
+      </div>
+      <div class="order-page__success-row">
+        <span class="order-page__success-label">Стоимость товаров:</span>
+        <span class="order-page__success-value">{{ formatPrice(productsAmount) }} {{ currencySymbol }}</span>
+      </div>
+      <div class="order-page__success-row">
+        <span class="order-page__success-label">Стоимость доставки:</span>
+        <span class="order-page__success-value">
+          {{ deliveryAmount > 0 ? `${formatPrice(deliveryAmount)} ${currencySymbol}` : 'Бесплатно' }}
         </span>
       </div>
       <div v-if="order.currency" class="order-page__success-row">
@@ -56,6 +66,14 @@
         alt="QR-код Kaspi для оплаты"
         class="order-page__success-qr-img"
       >
+    </div>
+
+    <div v-if="payMethod === 'CARD' && paymentUrl" class="order-page__success-pay">
+      <p class="order-page__success-pay-title">Оплата картой</p>
+      <p class="order-page__success-pay-text">
+        Нажмите кнопку ниже, чтобы перейти на защищённую страницу банка и оплатить заказ.
+      </p>
+      <a target="_blank" :href="paymentUrl" class="order-page__success-pay-btn">Оплатить заказ</a>
     </div>
 
     <div class="order-page__success-products">
@@ -92,15 +110,57 @@ const props = defineProps({
   },
 })
 
+const paymentUrl = computed(() => props.order?.payment_url || '')
+
+const currencySymbol = computed(() => props.order?.currency_symbol || '₸')
+
+const orderTotal = computed(
+  () => Number(props.order?.payment_amount_kzt || props.order?.amount) || 0,
+)
+
 const hasDiscount = computed(() => {
   const d = Number(props.order?.discount_applied) || 0
   return d > 0
 })
 
 const oldSum = computed(() => {
-  const current = Number(props.order?.payment_amount_kzt || props.order?.amount) || 0
   const discount = Number(props.order?.discount_applied) || 0
-  return current + discount
+  return orderTotal.value + discount
+})
+
+const productsAmount = computed(() => {
+  const o = props.order
+  const fromApi =
+    o?.items_amount_kzt ??
+    o?.products_amount_kzt ??
+    o?.subtotal_kzt ??
+    o?.items_total_kzt
+
+  if (fromApi != null && fromApi !== '') {
+    return Number(fromApi) || 0
+  }
+
+  return (o?.items || []).reduce((sum, item) => {
+    const price = Number(item.price_amount) || 0
+    const qty = Number(item.quantity) || 1
+    return sum + price * qty
+  }, 0)
+})
+
+const deliveryAmount = computed(() => {
+  const o = props.order
+  const fromApi =
+    o?.delivery_amount_kzt ??
+    o?.delivery_amount ??
+    o?.shipping_amount_kzt ??
+    o?.shipping_amount
+
+  if (fromApi != null && fromApi !== '') {
+    return Number(fromApi) || 0
+  }
+
+  const discount = Number(o?.discount_applied) || 0
+  return Math.max(0, orderTotal.value + discount - productsAmount.value)
 })
 
 function formatPrice(v) {

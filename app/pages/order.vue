@@ -199,6 +199,7 @@ import { useModalStore } from '@/stores/modal'
 
 import { useUiStore } from '@/stores/ui'
 
+
 import OrderProcuctCard from '@/components/cards/OrderProcuctCard.vue'
 
 import OrderPaymentMethods from '@/components/order/OrderPaymentMethods.vue'
@@ -379,36 +380,7 @@ async function submitOrder() {
       }
 
       const raw = await res.json()
-      const createdOrderForCardPayment = raw?.data ?? raw
-
-      if(paymentMethod.value === 'CARD') {
-          // --- register.do (application/x-www-form-urlencoded) ---
-
-        const orderData = createdOrderForCardPayment?.order ?? createdOrderForCardPayment
-        const orderNumber = createdOrderForCardPayment?.id ?? orderData?.id
-        const amount = orderData?.payment_amount_kzt ?? orderData?.amount
-
-        if (!orderNumber || amount == null) {
-          submitError.value = 'Не удалось получить данные заказа для оплаты'
-          return
-        }
-
-        const registerPayload = {
-          orderNumber: String(orderNumber),
-          amount, // KZT: тенге × 100 (10 000 ₸ → 1000000)
-          returnUrl: `${window.location.origin}/order-confirm`,
-          failUrl: `${window.location.origin}/order-failed`,
-          currency: '398',
-          language: 'ru',
-          sessionTimeoutSecs: '1200',
-        }
-        const cardPaymentResult = await cardPayment(registerPayload)
-        if (!cardPaymentResult?.ok) {
-          submitError.value = cardPaymentResult.bodyText
-        }
-      } else {
-        createdOrder.value = createdOrderForCardPayment?.order ?? createdOrderForCardPayment
-      }
+      createdOrder.value = raw?.data ?? raw
     }
 
     // CDEK
@@ -442,7 +414,6 @@ async function submitOrder() {
         const raw = await res.json()
         createdOrder.value = raw?.data ?? raw
         console.log('created order:', createdOrder.value)
-        return
       }
 
       // пункт выдачи
@@ -481,38 +452,6 @@ async function submitOrder() {
     submitError.value = 'Ошибка сети. Попробуйте позже.'
   } finally {
     isSubmitting.value = false
-  }
-}
-
-
-/** Bereke redirect: register.do → formUrl (дока Bereke, шаги 3–5) */
-async function cardPayment(registerPayload) {
-  const res = await fetch('/api/payment/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(registerPayload),
-  })
-
-  const bodyText = await res.text()
-
-  let result = null
-  try {
-    result = bodyText ? JSON.parse(bodyText) : null
-  } catch {
-    result = bodyText
-  }
-
-  if (result?.formUrl) {
-    if (result.orderId) {
-      sessionStorage.setItem('berekeOrderId', String(result.orderId))
-    }
-    window.location.href = result.formUrl
-    return { ok: true }
-  }
-
-  return {
-    ok: false,
-    bodyText: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
   }
 }
 

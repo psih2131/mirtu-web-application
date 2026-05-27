@@ -6,7 +6,7 @@
         v-model="search"
         type="text"
         class="cdek-city-widget__input"
-        placeholder="Начните вводить название вашего города и нажмите поиск"
+        placeholder="Введите название города"
         autocomplete="off"
         :readonly="!!selectedCity"
         @keydown.enter.prevent="onSearch"
@@ -70,6 +70,38 @@ const error = ref('')
 const isLoading = ref(false)
 const inputRef = ref(null)
 
+const SEARCH_DEBOUNCE_MS = 1000
+let searchDebounceTimer = null
+
+function clearSearchDebounce() {
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+    searchDebounceTimer = null
+  }
+}
+
+watch(search, (q) => {
+  clearSearchDebounce()
+
+  if (selectedCity.value) return
+
+  const trimmed = String(q || '').trim()
+  if (!trimmed) {
+    showDropdown.value = false
+    cityList.value = []
+    error.value = ''
+    return
+  }
+
+  searchDebounceTimer = setTimeout(() => {
+    onSearch()
+  }, SEARCH_DEBOUNCE_MS)
+})
+
+onBeforeUnmount(() => {
+  clearSearchDebounce()
+})
+
 watch(() => props.modelValue, (v) => {
   if (v?.name && v?.code) {
     selectedCity.value = { full_name: v.name, code: v.code }
@@ -81,6 +113,7 @@ watch(() => props.modelValue, (v) => {
 }, { immediate: true })
 
 async function onSearch() {
+  clearSearchDebounce()
   if (selectedCity.value) return
   const q = search.value.trim()
   if (!q) {
@@ -119,6 +152,7 @@ function selectCity(city) {
 }
 
 function onClear() {
+  clearSearchDebounce()
   selectedCity.value = null
   search.value = ''
   showDropdown.value = false

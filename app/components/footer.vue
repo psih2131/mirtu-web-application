@@ -37,7 +37,7 @@
             </ul>
           </div>
 
-          <div class="footer__col">
+          <!-- <div class="footer__col">
             <h3 class="footer__heading">Магазин</h3>
             <ul class="footer__list">
               <li><a href="#" class="footer__link">Новая коллекция</a></li>
@@ -46,7 +46,7 @@
               <li><a href="#" class="footer__link">Кроссовки</a></li>
               <li><a href="#" class="footer__link">Кеды</a></li>
             </ul>
-          </div>
+          </div> -->
         </div>
 
         <div class="footer__row-contacts">
@@ -133,7 +133,7 @@
             <p
              v-if="infoStore?.footerCopyright"
              class="footer__copyright" v-html="infoStore?.footerCopyright"></p>
-            <p class="footer__credits">Разработка и дизайн: <a class="footer__credits-link" href="https://kuzmych.com" target="_blank">Roman Kuzmych</a></p>
+            <p class="footer__credits">Разработка и дизайн: <a class="footer__credits-link" href="https://t.me/roman_dev_space" target="_blank">Roman Kuzmych</a></p>
 
         </div>
       </div>
