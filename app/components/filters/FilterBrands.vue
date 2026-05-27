@@ -81,10 +81,11 @@ const searchQuery = ref('')
 
 const filteredBrands = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
-  if (!q) return props.brands
-  return props.brands.filter((b) =>
-    (b.name || '').toLowerCase().includes(q)
-  )
+  const list = !q
+    ? [...props.brands]
+    : props.brands.filter((b) => (b.name || '').toLowerCase().includes(q))
+
+  return list.sort((a, b) => (Number(b.count) || 0) - (Number(a.count) || 0))
 })
 
 function toggle() {

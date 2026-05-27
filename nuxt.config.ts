@@ -8,12 +8,27 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'ru'
+      },
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
-      ],
-    },
-  },
+        { name: 'format-detection', content: 'telephone=no' },
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        },
 
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        // { rel: 'icon', type: 'image/x-icon', href: '/favicon_current.ico' },
+      ],
+
+    }
+  },
+  
+
+  
   vite: {
     server: {
       allowedHosts: ['unsolacing-sharee-appointable.ngrok-free.dev'],

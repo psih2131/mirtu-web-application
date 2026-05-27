@@ -596,4 +596,85 @@ const descriptionParagraphs = computed(() => {
   const text = cardData.value?.basicInfo?.title || ''
   return text ? [text] : []
 })
+
+
+
+
+
+
+
+//SEO
+
+console.log('cardDataRef____________', cardData.value)
+const fullUrl = requestURL.href
+
+// Schema.org Product (JSON-LD) — подставь значения
+const productJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: cardData.value?.displayInfo?.display_title || cardData.value?.basicInfo?.seo_title || 'Товар', // display_title / seo_title
+  description: cardData.value?.basicInfo?.title || 'Описание по умолчанию', // seo_description / title
+  image: productImages.value, // абсолютные URL: productImages
+  sku: cardData.value?.basicInfo?.articlePoizon ?? '', // basicInfo.articlePoizon
+  brand: {
+    '@type': 'Brand',
+    name: cardData.value?.basicInfo?.brand ?? '', // basicInfo.brand
+  },
+  offers: {
+    '@type': 'Offer',
+    url: fullUrl, // fullUrl
+    priceCurrency: cardData.value?.displayInfo?.displayPriceCurrency ?? 'KZT', // KZT
+    price: cardData.value?.displayInfo?.displayPriceAmount ?? 0, // displayPriceAmount
+    availability: cardData.value?.variants?.some((v) => v.isAvailable === true) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', // https://schema.org/InStock | https://schema.org/OutOfStock
+  },
+}
+
+useHead({
+    title: cardData.value?.basicInfo?.seo_title || cardData.value?.displayInfo?.display_title || 'Товар',
+    meta: [
+        // Description
+        { name: 'description', content: cardData.value?.basicInfo?.title || 'Описание по умолчанию' },
+
+        // Keywords (опционально, не влияет сильно на SEO)
+        // { name: 'keywords',  content: currentCarData.value[0].acf.klyuchevaya_fraza || 'Авто' },
+
+        // OpenGraph
+        { property: 'og:title', content: cardData.value?.basicInfo?.seo_title },
+        { property: 'og:description', content: cardData.value?.basicInfo?.title },
+        { property: 'og:type', content: 'product' },
+        { property: 'og:url', content: fullUrl },
+        { property: 'og:image', content: productImages.value[0] ?? '/preview.jpg' },
+
+        // OpenGraph Product
+        { property: 'product:price:amount', content: cardData.value?.displayInfo?.displayPriceAmount ?? 0 }, // цена (число, без валюты)
+        { property: 'product:price:currency', content: cardData.value?.displayInfo?.displayPriceCurrency ?? 'KZT' }, // KZT
+        { property: 'product:availability', content: cardData.value?.variants?.some((v) => v.isAvailable === true) ? 'in stock' : 'out of stock' }, // in stock | out of stock (isAvailable)
+        { property: 'product:brand', content: cardData.value?.basicInfo?.brand ?? '' }, // basicInfo.brand
+        { property: 'product:retailer_item_id', content: cardData.value?.basicInfo?.articlePoizon ?? '' }, // артикул
+
+        // Twitter Card (если используешь)
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: cardData.value?.basicInfo?.seo_title },
+        { name: 'twitter:description', content: cardData.value?.basicInfo?.title },
+        { name: 'twitter:image', content: productImages.value[0] ?? '/preview.jpg' },
+
+        // Индексация / Деиндексация
+        // Например, noindex для черновика:
+        {
+        name: 'robots',
+        content: 'index, follow'
+        }
+    ],
+    link: [
+        // Canonical (вручную или динамически)
+        { rel: 'canonical', href: fullUrl }
+    ],
+    script: [
+        {
+            type: 'application/ld+json',
+            children: JSON.stringify(productJsonLd),
+        },
+    ],
+})
+
 </script>
