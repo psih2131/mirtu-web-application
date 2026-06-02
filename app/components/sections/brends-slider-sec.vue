@@ -13,7 +13,7 @@
             :key="brand.id"
             class="brends-slider__slide"
           >
-            <NuxtLink :to="`/products?brand=${brand.id}`" class="brends-slide">
+            <NuxtLink :to="`/products/categories/1?brand=${brand.id}`" class="brends-slide">
               <div class="brends-slide__img-wrap">
                 <img
                   v-if="brand.logo"

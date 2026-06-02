@@ -201,21 +201,80 @@
 }
 
 .header__nav {
-    margin-left: 60px;
+    margin-left: 20px;
 }
 
 .header__nav-list {
     display: flex;
-
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
 }
 
 .header__nav-element {
-    font-size: 14px;
-    margin-right: 30px;
+    margin: 0;
 }
 
 .header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
     color: $dark1;
+    text-decoration: none;
+    background: $grey2;
+    border: 1px solid rgba(2, 10, 55, 0.06);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+        transform 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        background: $white;
+        border-color: rgba(22, 82, 152, 0.22);
+        box-shadow: 0 4px 14px rgba(2, 10, 55, 0.1);
+        transform: translateY(-1px);
+
+        .header__nav-link-count {
+            background: rgba(22, 82, 152, 0.16);
+        }
+    }
+
+    &.router-link-active {
+        background: $dark1;
+        color: $white;
+        border-color: $dark1;
+        box-shadow: 0 4px 16px rgba(2, 10, 55, 0.22);
+
+        .header__nav-link-count {
+            color: $white;
+            background: rgba(255, 255, 255, 0.18);
+        }
+    }
+}
+
+.header__nav-link-text {
+    letter-spacing: 0.01em;
+}
+
+.header__nav-link-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $blue1;
+    background: rgba(22, 82, 152, 0.12);
+    border-radius: 999px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .burger-menu {
@@ -288,13 +347,19 @@
         font-size: 12px;
     }
 
-    .header__nav-element {
-        margin-right: 20px;
-        font-size: 13px;
+    .header__nav-list {
+        gap: 8px;
+    }
 
-        &:last-child {
-            margin-right: 0;
-        }
+    .header__nav-link {
+        padding: 6px 12px 6px 14px;
+        font-size: 13px;
+    }
+
+    .header__nav-link-count {
+        min-width: 20px;
+        height: 20px;
+        font-size: 10px;
     }
 
     .header__all-cat-text {

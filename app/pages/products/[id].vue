@@ -297,11 +297,11 @@
 
     <!-- <ProductReviews :product-id="spu" /> -->
 
-    <SectionsProductsSliderSec
+    <!-- <SectionsProductsSliderSec
       title="Похожие товары"
       :products="relatedProducts"
       :max-slides-per-view="4"
-    />
+    /> -->
 
     <SizeTableModal
       v-model="sizeTableModalOpen"

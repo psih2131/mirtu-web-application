@@ -9,7 +9,16 @@
         <span class="category-page__breadcrumb-current">{{ categoryTitle }}</span>
       </nav>
 
-      <h1 class="category-page__title">{{ categoryTitle }}</h1>
+      <h1 class="category-page__title">
+        <span class="category-page__title-text">{{ categoryTitle }}</span>
+        <span
+          v-if="selectedBrandsText"
+          class="category-page__active-brand"
+          aria-label="Выбранные бренды"
+        >
+          {{ selectedBrandsText }}
+        </span>
+      </h1>
 
       <div class="category-page__layout">
 
@@ -51,6 +60,7 @@
             v-model="selectedBrandIds"
             :brands="availableFilters.filters.brands"
             :open="false"
+            :collapse-key="filtersCollapseKey"
           />
 
           <!-- Filter Series -->
@@ -60,6 +70,7 @@
             :series="availableFilters.filters.series"
             :selected-brand-ids="selectedBrandIds"
             :open="false"
+            :collapse-key="filtersCollapseKey"
           />
 
           <!-- Buttons Apply -->
@@ -117,9 +128,12 @@
 </template>
 
 <script setup>
+
 // Imports
 import { ref, computed, onMounted } from 'vue'
+
 import { useRuntimeConfig } from '#app'
+
 import { useRoute } from 'vue-router'
 
 import FiltersFilterBrands from '@/components/filters/FilterBrands.vue'
@@ -134,6 +148,7 @@ import useAllFiltrsData from '@/composables/allFiltrsData'
 
 import { useUiStore } from '@/stores/ui'
 
+
 // Variables
 const route = useRoute()
 
@@ -144,6 +159,7 @@ const categoryId = ref(+route.params.id)
 const categoryTitle = ref()
 
 const filtersOpen = ref(false)
+const filtersCollapseKey = ref(0)
 
 const allAvaliableCategories = ref([])
 
@@ -161,7 +177,25 @@ console.log('availableFilters', availableFilters.value)
 
 const priceRange = ref({ min: 0, max: 1000000 })
 const sortParams = ref({ sort_by: null, sort_order: null })
-const selectedBrandIds = ref([])
+
+function getBrandIdFromQuery(queryBrand) {
+  if (queryBrand == null || queryBrand === '') return null
+  const raw = Array.isArray(queryBrand) ? queryBrand[0] : queryBrand
+  const id = Number(raw)
+  return Number.isFinite(id) && id > 0 ? id : null
+}
+
+function resolveBrandFromQuery(queryBrand, brands) {
+  const brandId = getBrandIdFromQuery(queryBrand)
+  if (brandId === null) return null
+  return brands.find((b) => Number(b.id) === brandId) ?? null
+}
+
+const brandFromQuery = resolveBrandFromQuery(
+  route.query.brand,
+  availableFilters.value?.filters?.brands ?? []
+)
+const selectedBrandIds = ref(brandFromQuery ? [brandFromQuery.id] : [])
 const selectedGenders = ref([])
 const selectedSeriesIds = ref([])
 
@@ -192,6 +226,17 @@ const hasMore = computed(() => {
   const loaded = displayCards.value.length
   return total > loaded
 })
+
+const selectedBrands = computed(() => {
+  const brands = availableFilters.value?.filters?.brands ?? []
+  return selectedBrandIds.value
+    .map((id) => brands.find((b) => Number(b.id) === Number(id)))
+    .filter(Boolean)
+})
+
+const selectedBrandsText = computed(() =>
+  selectedBrands.value.map((b) => b.name).join(', ')
+)
 
 console.log('cardsData', cardsData.value)
 
@@ -274,6 +319,7 @@ function convertProductData(product) {
 
 function onApplyFilters() {
   filtersOpen.value = false
+  filtersCollapseKey.value++
   fetchCards()
 }
 
@@ -291,5 +337,15 @@ function resetFilters() {
   fetchCards()
 }
 
+onMounted(() => {
+  const brand = resolveBrandFromQuery(
+    route.query.brand,
+    availableFilters.value?.filters?.brands ?? []
+  )
+  if (!brand) return
+
+  selectedBrandIds.value = [brand.id]
+  onApplyFilters()
+})
 
 </script>

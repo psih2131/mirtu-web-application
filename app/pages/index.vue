@@ -5,318 +5,62 @@
     <brendsSliderSec />
 
     <productsSliderSec
-      title="Популярные модели"
-      :products="newArrivalsProducts"
+      title="Популярные кросовки Nike"
+      :products="popularModelsProducts"
     />
 
     <actualCatSec />
 
-    <productsSliderSec title="Часто покупают" :products="newArrivalsProducts" />
+    <productsSliderSec
+      title="Сумки на каждый день"
+      :products="frequentlyBoughtProducts"
+    />
 
-    <productsSliderSec title="Одежда для спорта" :products="clothingProducts" />
+    <productsSliderSec
+      title="Будь на стиле"
+      :products="sportClothingProducts"
+    />
 
-    <blogSliderSec :posts="blogPosts" />
+    <!-- <blogSliderSec :posts="blogPosts" /> -->
 
     <seoTextSec />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-
 import bannerSliderSec from "@/components/sections/banner-slider-sec.vue";
 import brendsSliderSec from "@/components/sections/brends-slider-sec.vue";
 import productsSliderSec from "@/components/sections/products-slider-sec.vue";
 import actualCatSec from "@/components/sections/actyal-cat-sec.vue";
 import blogSliderSec from "@/components/sections/blog-slider-sec.vue";
 import seoTextSec from "@/components/sections/seo-text-sec.vue";
-import a1 from "~/assets/images/products/a1.jpg";
-import a2 from "~/assets/images/products/a2.jpg";
-import a3 from "~/assets/images/products/a3.jpg";
-import a4 from "~/assets/images/products/a4.jpg";
-import a5 from "~/assets/images/products/a5.jpg";
-import a6 from "~/assets/images/products/a6.jpg";
 
-import { useCounterStore } from "@/stores/counter";
-import { useRuntimeConfig } from "#app";
-
-const apiUrlDomain = useRuntimeConfig().public.apiUrl;
-
-const store = useCounterStore();
-
-// Тестовый запрос к API согласно ТЗ: POST /cards с телом и query-параметрами
-const { data: testCards } = await useFetch(`${apiUrlDomain}/api/cards`, {
-  method: "POST",
-  body: {},
-  query: { limit: 20, offset: 0 },
+const { products: popularModelsProducts } = await useCardsProducts({
+  categoryIds: [1],
+  brandIds: [2],
+  sortBy: "rating",
+  sortOrder: "desc",
+  limit: 12,
+  key: "home-popular-models-rating-desc",
 });
-console.log("API cards:", testCards.value);
 
-const productImageModules = import.meta.glob(
-  "~/assets/images/products/*.webp",
-  { eager: true, query: "?url", import: "default" },
-);
-const productImageUrls = Object.values(productImageModules).map((m) =>
-  typeof m === "string" ? m : (m?.default ?? ""),
-);
+const { products: frequentlyBoughtProducts } = await useCardsProducts({
+  categoryIds: [4],
+  brandIds: [2],
+  sortBy: "rating",
+  sortOrder: "desc",
+  limit: 12,
+  key: "home-frequently-bought",
+});
 
-function getImg(index) {
-  return (
-    productImageUrls[index % productImageUrls.length] ??
-    productImageUrls[0] ??
-    ""
-  );
-}
-
-const colorPalette = [
-  "#1a1a1a",
-  "#ffffff",
-  "#c0c0c0",
-  "#8b4513",
-  "#2c5282",
-  "#c53030",
-  "#2f855a",
-  "#744210",
-  "#553c9a",
-  "#b83280",
-  "#dd6b20",
-  "#e53e3e",
-  "#3182ce",
-  "#38a169",
-];
-/** Детерминированный выбор цветов — одинаковый результат на сервере и клиенте (избегает hydration mismatch) */
-function pickColorsForIndex(index, count) {
-  const start = (index * 7) % colorPalette.length;
-  return Array.from({ length: count }, (_, i) => colorPalette[(start + i) % colorPalette.length]);
-}
-
-const productRows = [
-  {
-    title: "Nike SB Dunk Low Pro",
-    subtitle: "Skate Shoes",
-    price: "45 990 ₸",
-    img: getImg(0),
-    tag: "BEST SELLER",
-    description:
-      "Классика, на которую можно положиться. Дизайн в духе скейт-культуры и кожаных курток — удобные кроссовки для города и катания.",
-  },
-  {
-    title: "adidas Hamburg",
-    subtitle: "Кроссовки",
-    price: "32 990 ₸",
-    img: getImg(1),
-    description:
-      "Легендарная модель adidas в ретро-стиле. Удобная колодка и узнаваемый силуэт для повседневной носки.",
-  },
-  {
-    title: "Reebok Club C 85",
-    subtitle: "Женские кроссовки",
-    price: "28 990 ₸",
-    img: getImg(2),
-    tag: "BEST SELLER",
-    description:
-      "Минималистичный дизайн и мягкая подошва. Идеальный выбор для тех, кто ценит простоту и комфорт.",
-  },
-  {
-    title: "Nike Blazer Low '77",
-    subtitle: "Мужские кроссовки",
-    price: "49 990 ₸",
-    img: getImg(3),
-    description:
-      "Низкий силуэт в духе баскетбола 70-х. Классика Nike с современной посадкой и долговечными материалами.",
-  },
-  {
-    title: "New Balance 574",
-    subtitle: "Беговые",
-    price: "39 990 ₸",
-    img: getImg(4),
-    description:
-      "Универсальная модель для бега и прогулок. Поддержка стопы и стабильность в каждой детали.",
-  },
-  {
-    title: "Converse Chuck Taylor",
-    subtitle: "Кеды",
-    price: "24 990 ₸",
-    img: getImg(5),
-    tag: "BEST SELLER",
-    description:
-      "Самые узнаваемые кеды в мире. Канвас, резиновая подошва и дух уличной культуры с 1917 года.",
-  },
-  {
-    title: "Puma Suede Classic",
-    subtitle: "Кроссовки",
-    price: "21 990 ₸",
-    img: getImg(6),
-    description:
-      "Замшевый верх и мягкая подошва. Классика Puma для повседневного стиля.",
-  },
-  {
-    title: "Vans Old Skool",
-    subtitle: "Скейтбординг",
-    price: "27 990 ₸",
-    img: getImg(7),
-    description:
-      "Полоска на боку и прочная конструкция. Выбор скейтеров и любителей уличной моды по всему миру.",
-  },
-  {
-    title: "adidas Hamburg",
-    subtitle: "Кроссовки",
-    price: "32 990 ₸",
-    img: getImg(1),
-    description:
-      "Легендарная модель adidas в ретро-стиле. Удобная колодка и узнаваемый силуэт для повседневной носки.",
-  },
-  {
-    title: "Reebok Club C 85",
-    subtitle: "Женские кроссовки",
-    price: "28 990 ₸",
-    img: getImg(2),
-    description:
-      "Минималистичный дизайн и мягкая подошва. Идеальный выбор для тех, кто ценит простоту и комфорт.",
-  },
-  {
-    title: "Nike Blazer Low '77",
-    subtitle: "Мужские кроссовки",
-    price: "49 990 ₸",
-    img: getImg(3),
-    description:
-      "Низкий силуэт в духе баскетбола 70-х. Классика Nike с современной посадкой и долговечными материалами.",
-  },
-  {
-    title: "New Balance 574",
-    subtitle: "Беговые",
-    price: "39 990 ₸",
-    img: getImg(4),
-    description:
-      "Универсальная модель для бега и прогулок. Поддержка стопы и стабильность в каждой детали.",
-  },
-  {
-    title: "Converse Chuck Taylor",
-    subtitle: "Кеды",
-    price: "24 990 ₸",
-    img: getImg(5),
-    description:
-      "Самые узнаваемые кеды в мире. Канвас, резиновая подошва и дух уличной культуры с 1917 года.",
-  },
-  {
-    title: "Puma Suede Classic",
-    subtitle: "Кроссовки",
-    price: "21 990 ₸",
-    img: getImg(6),
-    description:
-      "Замшевый верх и мягкая подошва. Классика Puma для повседневного стиля.",
-  },
-  {
-    title: "Vans Old Skool",
-    subtitle: "Скейтбординг",
-    price: "27 990 ₸",
-    img: getImg(7),
-    description:
-      "Полоска на боку и прочная конструкция. Выбор скейтеров и любителей уличной моды по всему миру.",
-  },
-];
-
-const productRows2 = [
-  {
-    title: "Oversize худи Essential",
-    subtitle: "Тёплые толстовки на каждый день",
-    price: "29 990 ₸",
-    img: a1,
-    tag: "NEW",
-    description:
-      "Мягкий хлопок, свободный крой и универсальные оттенки — базовый худи для города и отдыха.",
-  },
-  {
-    title: "Флисовая кофта Trail",
-    subtitle: "Туристическая одежда",
-    price: "34 990 ₸",
-    img: a2,
-    description:
-      "Лёгкий и тёплый флис, который удобно брать в поход или на прогулку в прохладную погоду.",
-  },
-  {
-    title: "Ветровка RunPro",
-    subtitle: "Для бега и тренировок",
-    price: "37 990 ₸",
-    img: a3,
-    description:
-      "Защита от ветра и влаги, рефлективные детали и продуманные вентиляционные вставки.",
-  },
-  {
-    title: "Парка Urban Winter",
-    subtitle: "Городская зима",
-    price: "59 990 ₸",
-    img: a4,
-    description:
-      "Утеплённая парка с капюшоном и вместительными карманами — стильная защита от холода.",
-  },
-  {
-    title: "Костюм Motion Set",
-    subtitle: "Худи и брюки",
-    price: "49 990 ₸",
-    img: a5,
-    description:
-      "Спортивный комплект для активного дня: мягкий трикотаж и комфортный крой.",
-  },
-  {
-    title: "Футболка Everyday Tee",
-    subtitle: "Базовый гардероб",
-    price: "14 990 ₸",
-    img: a6,
-    description:
-      "Классическая хлопковая футболка, которая подходит и под джинсы, и под спортивный образ.",
-  },
-  {
-    title: "Флисовая кофта Trail",
-    subtitle: "Туристическая одежда",
-    price: "34 990 ₸",
-    img: a2,
-    description:
-      "Лёгкий и тёплый флис, который удобно брать в поход или на прогулку в прохладную погоду.",
-  },
-  {
-    title: "Ветровка RunPro",
-    subtitle: "Для бега и тренировок",
-    price: "37 990 ₸",
-    img: a3,
-    description:
-      "Защита от ветра и влаги, рефлективные детали и продуманные вентиляционные вставки.",
-  },
-  {
-    title: "Парка Urban Winter",
-    subtitle: "Городская зима",
-    price: "59 990 ₸",
-    img: a4,
-    description:
-      "Утеплённая парка с капюшоном и вместительными карманами — стильная защита от холода.",
-  },
-  {
-    title: "Костюм Motion Set",
-    subtitle: "Худи и брюки",
-    price: "49 990 ₸",
-    img: a5,
-    description:
-      "Спортивный комплект для активного дня: мягкий трикотаж и комфортный крой.",
-  },
-  {
-    title: "Футболка Everyday Tee",
-    subtitle: "Базовый гардероб",
-    price: "14 990 ₸",
-    img: a6,
-    description:
-      "Классическая хлопковая футболка, которая подходит и под джинсы, и под спортивный образ.",
-  },
-];
-
-const newArrivalsProducts = productRows.map((p, i) => ({
-  ...p,
-  colors: pickColorsForIndex(i, 2 + (i % 2)),
-}));
-
-const clothingProducts = productRows2.map((p, i) => ({
-  ...p,
-  colors: pickColorsForIndex(productRows.length + i, 2 + (i % 2)),
-}));
+const { products: sportClothingProducts } = await useCardsProducts({
+  categoryIds: [2],
+  brandIds: [96],
+  sortBy: "rating",
+  sortOrder: "desc",
+  limit: 12,
+  key: "home-sport-clothing",
+});
 
 const blogPosts = [
   {
@@ -376,5 +120,4 @@ const blogPosts = [
   },
 ];
 
-onMounted(() => {});
 </script>

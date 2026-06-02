@@ -44,6 +44,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  collapseKey: {
+    type: Number,
+    default: 0,
+  },
   modelValue: {
     type: Array,
     default: () => [],
@@ -85,6 +89,13 @@ watch(
     selectedNames.value = [...(val || [])]
   },
   { deep: true }
+)
+
+watch(
+  () => props.collapseKey,
+  () => {
+    isOpen.value = false
+  }
 )
 </script>
 

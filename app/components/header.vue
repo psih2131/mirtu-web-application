@@ -144,7 +144,7 @@
         </div>
       </div>
       <div class="header__down">
-        <NuxtLink to="/products" class="header__all-cat" 
+        <NuxtLink class="header__all-cat" 
         @click="mobMenyOpen = false">
           <svg
             width="24"
@@ -178,11 +178,20 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span class="header__all-cat-text">Все категории</span>
+          <!-- <span class="header__all-cat-text">Все категории</span> -->
         </NuxtLink>
 
         <nav class="header__nav">
           <ul class="header__nav-list">
+            <li class="header__nav-element">
+              <NuxtLink
+                to="/"
+                @click="mobMenyOpen = false"
+                class="header__nav-link"
+              >
+                <span class="header__nav-link-text">Главная</span>
+              </NuxtLink>
+            </li>
             <li
               class="header__nav-element"
               v-for="value in allAvaliableCategories"
@@ -193,8 +202,12 @@
                 @click="mobMenyOpen = false"
                 class="header__nav-link"
               >
-                {{ value.name_ru }}
-                <span class="header__nav-link-count">({{ value.count }})</span>
+                <span class="header__nav-link-text">{{ value.name_ru }}</span>
+                <span
+                  v-if="value.count"
+                  class="header__nav-link-count"
+                  >{{ value.count }}</span
+                >
               </NuxtLink>
             </li>
           </ul>
@@ -216,11 +229,11 @@
               Главная
             </NuxtLink>
           </li>
-          <li class="mob-meny__element">
+          <!-- <li class="mob-meny__element">
             <NuxtLink to="/products" class="mob-meny__link" @click="mobMenyOpen = false">
               Все категории
             </NuxtLink>
-          </li>
+          </li> -->
           <li
             class="mob-meny__element"
             v-for="value in allAvaliableCategories"

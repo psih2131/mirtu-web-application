@@ -3,10 +3,10 @@
     <div class="container">
       <div class="actual-cat-sec__header">
         <h2 class="actual-cat-sec__title">
-          Обувь для всех видов активности
+          Популярные категории
         </h2>
         <p class="actual-cat-sec__desc">
-          Современный магазин обуви с акцентом на минимализм и качество: беговые, туристические и скейт-модели для города и активного отдыха.
+          Обувь, одежда и аксессуары для города, спорта и путешествий — выберите раздел и смотрите актуальные модели.
         </p>
       </div>
 
@@ -36,32 +36,30 @@
 
 <script setup>
 import runImg from '~/assets/images/category/x1.webp'
-import travelImg from '~/assets/images/category/x2.jpg'
-import snowImg from '~/assets/images/category/x3.jpeg'
+import travelImg from '~/assets/images/category/x4.jpg'
+import snowImg from '~/assets/images/category/x5.jpg'
 
 const categoryCards = [
   {
-    slug: 'running',
-    title: 'Беговые',
-    subtitle: 'Для тренировок и марафонов',
+    slug: 'sneakers',
+    title: 'Кроссовки',
+    subtitle: 'Для города, спорта и повседневных образов',
     img: runImg,
-    to: '/catalog?cat=running',
-    withCircleBtn: true,
+    to: '/products/categories/1',
   },
   {
-    slug: 'hiking',
-    title: 'Туристические',
-    subtitle: 'В поход и на тропу',
+    slug: 'clothing',
+    title: 'Одежда',
+    subtitle: 'Стильные вещи для тренировок и отдыха',
     img: travelImg,
-    to: '/catalog?cat=hiking',
+    to: '/products/categories/2',
   },
   {
-    slug: 'snowboard',
-    title: 'Сноубординг',
-    subtitle: 'Горы и склоны',
+    slug: 'bags',
+    title: 'Сумки',
+    subtitle: 'На каждый день и для путешествий',
     img: snowImg,
-    to: '/catalog?cat=snowboard',
-    withBtn: true,
+    to: '/products/categories/4',
   },
 ]
 </script>

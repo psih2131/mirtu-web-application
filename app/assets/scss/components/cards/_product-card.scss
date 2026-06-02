@@ -113,6 +113,15 @@
   text-align: left;
 }
 
+.product-card__link-title{
+  color: #111827;
+
+  &:hover{
+    color: $blue1;
+    transition: all ease 0.3s;
+  }
+}
+
 .product-card__subtitle {
   font-size: 13px;
   color: #6b7280;

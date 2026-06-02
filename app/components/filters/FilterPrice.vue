@@ -31,11 +31,22 @@ const props = defineProps({
     type: Object,
     default: () => ({ min: 0, max: 1000000 }),
   },
+  collapseKey: {
+    type: Number,
+    default: 0,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
 
 const isOpen = ref(true)
+
+watch(
+  () => props.collapseKey,
+  () => {
+    isOpen.value = false
+  }
+)
 
 const rangeValue = computed({
   get: () => [props.modelValue?.min ?? 0, props.modelValue?.max ?? 1000000],

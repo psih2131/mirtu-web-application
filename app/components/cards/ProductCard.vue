@@ -39,7 +39,9 @@
       </div>
 
       <div class="product-card__body">
-      <h3 class="product-card__title">{{ product.title }}</h3>
+      <h3 class="product-card__title">
+        <NuxtLink :to="`/products/${product.slug}` || `/products/${product.spu}`" class="product-card__link-title">{{ product.title }}</NuxtLink>
+      </h3>
       <p class="product-card__subtitle">{{ product.subtitle }}</p>
       
     </div>
