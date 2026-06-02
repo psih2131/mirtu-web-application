@@ -120,4 +120,70 @@ const blogPosts = [
   },
 ];
 
+// SEO
+const requestURL = useRequestURL();
+const siteOrigin = requestURL.origin;
+const fullUrl = `${siteOrigin}/`;
+const ogImage = `${siteOrigin}/preview.jpg`;
+
+const SEO_TITLE =
+  "Mirtu — интернет-магазин кроссовок, одежды и сумок в Казахстане";
+const SEO_DESCRIPTION =
+  "Купить кроссовки, спортивную одежду и сумки онлайн с доставкой по Казахстану. Оригинальные бренды, удобные фильтры, актуальные цены в тенге. Каталог обуви и аксессуаров на mirtu.kz.";
+
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "Mirtu",
+      url: siteOrigin,
+      description: SEO_DESCRIPTION,
+      inLanguage: "ru-KZ",
+    },
+    {
+      "@type": "Organization",
+      name: "Mirtu",
+      url: siteOrigin,
+      logo: `${siteOrigin}/favicon.png`,
+    },
+    {
+      "@type": "Store",
+      name: "Mirtu",
+      url: siteOrigin,
+      image: ogImage,
+      description: SEO_DESCRIPTION,
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "KZ",
+      },
+    },
+  ],
+};
+
+useHead({
+  title: SEO_TITLE,
+  meta: [
+    { name: "description", content: SEO_DESCRIPTION },
+    { property: "og:title", content: SEO_TITLE },
+    { property: "og:description", content: SEO_DESCRIPTION },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: fullUrl },
+    { property: "og:image", content: ogImage },
+    { property: "og:locale", content: "ru_KZ" },
+    { property: "og:site_name", content: "Mirtu" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: SEO_TITLE },
+    { name: "twitter:description", content: SEO_DESCRIPTION },
+    { name: "twitter:image", content: ogImage },
+    { name: "robots", content: "index, follow" },
+  ],
+  link: [{ rel: "canonical", href: fullUrl }],
+  script: [
+    {
+      type: "application/ld+json",
+      children: JSON.stringify(homeJsonLd),
+    },
+  ],
+});
 </script>

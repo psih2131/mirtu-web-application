@@ -1,2 +1,11 @@
-User-Agent: *
-Disallow:
+User-agent: *
+Allow: /
+
+# Личный кабинет и оформление заказа
+Disallow: /user
+Disallow: /order
+Disallow: /order-confirm
+Disallow: /order-failed
+Disallow: /favorites
+
+Sitemap: https://mirtu.kz/sitemap.xml

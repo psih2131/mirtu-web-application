@@ -348,4 +348,61 @@ onMounted(() => {
   onApplyFilters()
 })
 
+// SEO
+const requestURL = useRequestURL()
+const siteOrigin = requestURL.origin
+const categoryPageUrl = `${siteOrigin}/products/categories/${categoryId.value}`
+const ogImage = `${siteOrigin}/preview.jpg`
+
+const CATEGORY_SEO_DESCRIPTION =
+  'Каталог товаров интернет-магазина Mirtu: оригинальные бренды, фильтры по цене и параметрам, доставка по Казахстану, цены в тенге.'
+
+const SEO_TITLE_SUFFIX =
+  'Mirtu — интернет-магазин кроссовок, одежды и сумок в Казахстане'
+
+const seoTitle = computed(() => {
+  const name = categoryTitle.value || 'Каталог'
+  return `${name} — ${SEO_TITLE_SUFFIX}`
+})
+
+const categoryJsonLd = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: seoTitle.value,
+  description: CATEGORY_SEO_DESCRIPTION,
+  url: categoryPageUrl,
+  inLanguage: 'ru-KZ',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'Mirtu',
+    url: siteOrigin,
+  },
+}))
+
+useHead({
+  title: seoTitle,
+  meta: computed(() => [
+    { name: 'description', content: CATEGORY_SEO_DESCRIPTION },
+    { property: 'og:title', content: seoTitle.value },
+    { property: 'og:description', content: CATEGORY_SEO_DESCRIPTION },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: categoryPageUrl },
+    { property: 'og:image', content: ogImage },
+    { property: 'og:locale', content: 'ru_KZ' },
+    { property: 'og:site_name', content: 'Mirtu' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: seoTitle.value },
+    { name: 'twitter:description', content: CATEGORY_SEO_DESCRIPTION },
+    { name: 'twitter:image', content: ogImage },
+    { name: 'robots', content: 'index, follow' },
+  ]),
+  link: [{ rel: 'canonical', href: categoryPageUrl }],
+  script: computed(() => [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify(categoryJsonLd.value),
+    },
+  ]),
+})
+
 </script>

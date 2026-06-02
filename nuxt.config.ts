@@ -48,6 +48,21 @@ export default defineNuxtConfig({
     },
   },
 
+
+
+  sitemap: {
+
+    sitemaps: {
+      pages: {
+        sources: [
+          '/api/__sitemap__/url',
+        ]
+      },
+
+
+    }
+  },
+
   runtimeConfig: {
     cdecAccountId: process.env.NUXT_CDEC_ACCOUNT_ID || '',
     cdecApiKey: process.env.NUXT_SECRET_CDEK_API_KEY || '',
@@ -65,5 +80,9 @@ export default defineNuxtConfig({
   },
 
   modules: [// другие модули
-  '@pinia/nuxt', 'nuxt-swiper'],
+  '@pinia/nuxt', 'nuxt-swiper', '@nuxtjs/sitemap'],
+
+  site: {
+    url: 'https://mirtu.kz',
+  },
 })
