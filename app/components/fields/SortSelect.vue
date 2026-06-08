@@ -7,28 +7,28 @@
       :value="selectValue"
       @change="onChange"
     >
-      <option value="default">По умолчанию</option>
+      <option value="rating-desc">По рейтингу</option>
       <option value="price-asc">По возрастанию цены</option>
       <option value="price-desc">По убыванию цены</option>
       <option value="creation_date-desc">По дате добавления</option>
-      <option value="rating-desc">По рейтингу</option>
     </select>
   </div>
 </template>
 
 <script setup>
+const DEFAULT_SORT = { sort_by: 'rating', sort_order: 'desc' }
+
 const SORT_MAP = {
-  default: { sort_by: null, sort_order: null },
+  'rating-desc': { ...DEFAULT_SORT },
   'price-asc': { sort_by: 'price', sort_order: 'asc' },
   'price-desc': { sort_by: 'price', sort_order: 'desc' },
   'creation_date-desc': { sort_by: 'creation_date', sort_order: 'desc' },
-  'rating-desc': { sort_by: 'rating', sort_order: 'desc' },
 }
 
 const props = defineProps({
   modelValue: {
     type: Object,
-    default: () => ({ sort_by: null, sort_order: null }),
+    default: () => ({ sort_by: 'rating', sort_order: 'desc' }),
   },
 })
 
@@ -36,9 +36,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const selectValue = computed(() => {
   const v = props.modelValue
-  if (!v?.sort_by) return 'default'
+  if (!v?.sort_by) return 'rating-desc'
   const key = `${v.sort_by}-${v.sort_order}`
-  return Object.keys(SORT_MAP).includes(key) ? key : 'default'
+  return Object.keys(SORT_MAP).includes(key) ? key : 'rating-desc'
 })
 
 function onChange(e) {

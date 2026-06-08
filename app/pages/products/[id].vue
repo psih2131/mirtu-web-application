@@ -66,10 +66,10 @@
               <h1 class="product-hero__title">{{ cardData?.basicInfo?.title || cardData?.displayInfo?.display_title || '—' }}</h1>
             </div>
             
-            <div class="product-hero__rating">
+            <!-- <div class="product-hero__rating">
               <span class="product-hero__stars" aria-hidden="true">★★★★☆</span>
               <NuxtLink to="#reviews" class="product-hero__reviews-link">0 отзывов</NuxtLink>
-            </div>
+            </div> -->
 
             <div class="product-hero__price-wrap">
               <span class="product-hero__price">{{ productPrice }}</span>
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Sizes -->
-            <div class="product-hero__option">
+            <div v-if="showSizeOption" class="product-hero__option">
               <span class="product-hero__option-label">Размер: {{ selectedVariant?.args?.Размер ?? selectedVariant?.style_value ?? '—' }}</span>
               <div class="product-hero__sizes">
 
@@ -155,7 +155,20 @@
               <p class="product-hero__out-of-stock-hint">Товар отсутствует на складе</p>
             </div>
 
-            <p class="product-hero__delivery">Бесплатная доставка при заказе от 30 000 ₸</p>
+            <div class="product-hero__delivery">
+              <span class="product-hero__delivery-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 6h11v9H3V6z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
+                  <path d="M14 9h4l3 4v2h-7V9z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
+                  <circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="1.75" />
+                  <circle cx="18" cy="17" r="2" stroke="currentColor" stroke-width="1.75" />
+                </svg>
+              </span>
+              <div class="product-hero__delivery-content">
+                <span class="product-hero__delivery-label">Срок доставки</span>
+                <span class="product-hero__delivery-term">от 7 до 14 дней</span>
+              </div>
+            </div>
 
             <div v-if="cardData" class="product-hero__about">
               <h2 class="product-hero__about-title">О товаре</h2>
@@ -352,18 +365,41 @@ try {
 }
 const { data: cardData } = cardDataRef
 
+const CATEGORY_ID_BY_TITLE = {
+  'Кроссовки': 1,
+  'Аксессуары': 5,
+  'Обувь': 3,
+  'Одежда': 2,
+  'Игрушки': 6,
+  'Сумки': 4,
+}
+
+function getCategoryIdByTitle(title) {
+  if (!title) return null
+  return CATEGORY_ID_BY_TITLE[title] ?? null
+}
+
+const categoryTitle = computed(() => {
+  const category = cardData.value?.basicInfo?.category
+  return category?.category_ru || category?.name_ru || ''
+})
+
+const CATEGORIES_WITHOUT_SIZE = ['Сумки', 'Игрушки']
+
+const showSizeOption = computed(() => !CATEGORIES_WITHOUT_SIZE.includes(categoryTitle.value))
+
 const breadcrumbs = computed(() => {
   const bi = cardData.value?.basicInfo
   const di = cardData.value?.displayInfo
-  const category = bi?.category
-  const categoryTitle = category?.category_ru || category?.name_ru || 'Каталог'
-  const categoryId = category?.id
+  const categoryTitleValue = categoryTitle.value || 'Каталог'
   const productTitle = bi?.title || di?.display_title || 'Товар'
   const items = []
-  if (categoryTitle && categoryTitle !== 'Каталог') {
+  if (categoryTitleValue && categoryTitleValue !== 'Каталог') {
+    const idCat = getCategoryIdByTitle(categoryTitleValue)
     items.push({
-      title: categoryTitle,
-      to: categoryId ? `/products/categories/${categoryId}` : null,
+      title: categoryTitleValue,
+      idCat,
+      to: idCat ? `/products/categories/${idCat}` : null,
     })
   }
   items.push({ title: productTitle, to: null })

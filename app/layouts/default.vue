@@ -8,6 +8,8 @@
     <footerComponent :dataContacts="aboutData" />
 
     <cartComponent />
+
+    <ContactWidget :data-contacts="aboutData" />
     
   </div>
 </template>
@@ -16,6 +18,7 @@
 import headerComponent from '@/components/header.vue'
 import footerComponent from '@/components/footer.vue'
 import cartComponent from '@/components/cart.vue'
+import ContactWidget from '@/components/ContactWidget.vue'
 import { useCounterStore } from '@/stores/counter'
 
 const counterStore = useCounterStore()

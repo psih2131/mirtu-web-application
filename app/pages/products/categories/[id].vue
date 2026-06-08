@@ -48,11 +48,11 @@
           <FiltersFilterPrice v-model="priceRange" />
 
           <!-- Filter Gender -->
-          <FiltersFilterGender
+          <!-- <FiltersFilterGender
             v-if="availableFilters?.filters?.genders?.length"
             v-model="selectedGenders"
             :genders="availableFilters.filters.genders"
-          />
+          /> -->
 
           <!-- Filter Brands -->
           <FiltersFilterBrands
@@ -176,7 +176,8 @@ const { data: availableFilters } = await useFetch(`${apiBase}/filters`, {
 console.log('availableFilters', availableFilters.value)
 
 const priceRange = ref({ min: 0, max: 1000000 })
-const sortParams = ref({ sort_by: null, sort_order: null })
+const DEFAULT_SORT_PARAMS = { sort_by: 'rating', sort_order: 'desc' }
+const sortParams = ref({ ...DEFAULT_SORT_PARAMS })
 
 function getBrandIdFromQuery(queryBrand) {
   if (queryBrand == null || queryBrand === '') return null
@@ -333,7 +334,7 @@ function resetFilters() {
   selectedGenders.value = []
   selectedSeriesIds.value = []
   priceRange.value = { min: 0, max: 1000000 }
-  sortParams.value = { sort_by: null, sort_order: null }
+  sortParams.value = { ...DEFAULT_SORT_PARAMS }
   fetchCards()
 }
 

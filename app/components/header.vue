@@ -300,9 +300,30 @@ const mobMenyOpen = ref(false);
 
 const allAvaliableCategories = ref([]);
 
+const CATEGORY_NAV_ORDER = [
+  'Кроссовки',
+  'Обувь',
+  'Сумки',
+  'Одежда',
+  'Аксессуары',
+  'Игрушки',
+]
+
+function sortCategoriesByNavOrder(categories) {
+  const orderMap = new Map(CATEGORY_NAV_ORDER.map((name, index) => [name, index]))
+  return [...categories].sort((a, b) => {
+    const rankA = orderMap.has(a.name_ru) ? orderMap.get(a.name_ru) : CATEGORY_NAV_ORDER.length
+    const rankB = orderMap.has(b.name_ru) ? orderMap.get(b.name_ru) : CATEGORY_NAV_ORDER.length
+    if (rankA !== rankB) return rankA - rankB
+    return (a.name_ru || '').localeCompare(b.name_ru || '', 'ru')
+  })
+}
+
 //All avaliable categories from server for header nav
 const { allFiltrsData } = await useAllFiltrsData();
-allAvaliableCategories.value = allFiltrsData.value?.filters?.categories ?? [];
+allAvaliableCategories.value = sortCategoriesByNavOrder(
+  allFiltrsData.value?.filters?.categories ?? []
+);
 
 console.log(allAvaliableCategories.value);
 
