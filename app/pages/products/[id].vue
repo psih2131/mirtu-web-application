@@ -155,7 +155,7 @@
               <p class="product-hero__out-of-stock-hint">Товар отсутствует на складе</p>
             </div>
 
-            <div class="product-hero__delivery">
+            <div v-if="deliveryOptionsList.length" class="product-hero__delivery">
               <span class="product-hero__delivery-icon" aria-hidden="true">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3 6h11v9H3V6z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
@@ -166,7 +166,16 @@
               </span>
               <div class="product-hero__delivery-content">
                 <span class="product-hero__delivery-label">Срок доставки</span>
-                <span class="product-hero__delivery-term">от 7 до 14 дней</span>
+                <div class="product-hero__delivery-options">
+                  <div
+                    v-for="opt in deliveryOptionsList"
+                    :key="opt.method"
+                    class="product-hero__delivery-row"
+                  >
+                    <span class="product-hero__delivery-type">{{ deliveryOptionTitle(opt.method) }}</span>
+                    <span class="product-hero__delivery-term">от {{ opt.day_min }} до {{ opt.day_max }} дней</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -364,6 +373,36 @@ try {
   uiStore.hidePreloader()
 }
 const { data: cardData } = cardDataRef
+
+const deliveryMethods = ref(null)
+
+try {
+  const deliveryOptionsRes = await fetch(`${apiBase}/order/delivery-options`, {
+    method: 'GET',
+    headers: { accept: 'application/json' },
+  })
+  deliveryMethods.value = await deliveryOptionsRes.json()
+} catch (error) {
+  console.error('deliveryOptions error:', error)
+}
+
+const DELIVERY_OPTION_TITLES = {
+  STANDARD: 'Стандартная',
+  FAST: 'Быстрая',
+}
+
+const DELIVERY_OPTION_ORDER = { STANDARD: 0, FAST: 1 }
+
+function deliveryOptionTitle(method) {
+  return DELIVERY_OPTION_TITLES[method] || method
+}
+
+const deliveryOptionsList = computed(() => {
+  const opts = deliveryMethods.value?.delivery_options || []
+  return [...opts].sort(
+    (a, b) => (DELIVERY_OPTION_ORDER[a.method] ?? 99) - (DELIVERY_OPTION_ORDER[b.method] ?? 99)
+  )
+})
 
 const CATEGORY_ID_BY_TITLE = {
   'Кроссовки': 1,

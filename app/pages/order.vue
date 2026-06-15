@@ -160,7 +160,7 @@
             </div>
             <!-- payment methods -->
             <OrderPaymentMethods v-model:payment-method="paymentMethod" />
-            {{ 'paymentMethod: ' + paymentMethod }}
+            <!-- {{ 'paymentMethod: ' + paymentMethod }} -->
           </section>
         </main>
 

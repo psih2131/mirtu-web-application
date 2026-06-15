@@ -50,7 +50,7 @@ $contact-widget-step: $contact-widget-link-size + $contact-widget-gap;
     background 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
-  transition-delay: calc((4 - var(--i)) * 0.04s);
+  transition-delay: calc((var(--items-last-index) - var(--i)) * 0.04s);
 
   &:hover {
     color: $blue1;
